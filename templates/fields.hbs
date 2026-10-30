@@ -1,0 +1,120 @@
+<div class="stt-fields-shell">
+  <section class="stt-fields-main">
+    <header class="stt-fields-head">
+      <p class="stt-eyebrow">Sephral’s Token Tooltips</p>
+      <h2>{{localize "STT.Fields.heading"}}</h2>
+      <p class="stt-hint">{{localize "STT.Fields.intro" preset=preset system=system}}</p>
+    </header>
+    <div class="stt-field-columns" aria-hidden="true">
+      <span class="stt-col-show" data-tooltip="{{localize "STT.Fields.colShow"}}"><i class="fa-solid fa-eye" inert></i></span>
+      <span>{{localize "STT.Fields.colField"}}</span>
+      <span>{{localize "STT.Fields.colAudience"}}</span>
+      <span>{{localize "STT.Fields.colOthers"}}</span>
+      <span>{{localize "STT.Fields.colLook"}}</span>
+      <span></span>
+    </div>
+    <ol class="stt-field-list">
+      {{#each fields}}
+      <li class="stt-field{{#unless config.enabled}} off{{/unless}}" data-field-id="{{id}}">
+        <label class="stt-field-on" data-tooltip="{{localize "STT.Fields.colShow"}}">
+          <input type="checkbox" name="{{id}}.enabled" {{checked config.enabled}} aria-label="{{localize "STT.Fields.colShow"}}: {{label}}">
+        </label>
+        <span class="stt-field-name">
+          <i class="{{icon}}" inert></i>
+          <span>{{label}}
+            <small>{{type}}{{#if types}} · {{types}}{{/if}}{{#if custom}} · <code>{{path}}</code>{{/if}}{{#if external}} · {{localize "STT.Fields.external"}}{{/if}}</small>
+          </span>
+        </span>
+        <select name="{{id}}.audience" aria-label="{{localize "STT.Fields.colAudience"}}: {{label}}">
+          {{selectOptions audienceChoices selected=config.audience}}
+        </select>
+        <span class="stt-forms">
+          {{#if everyone}}
+          {{#each forms}}
+          <label class="stt-form" data-disposition="{{key}}" data-tooltip="{{label}}">
+            <span class="stt-disposition-dot" inert></span>
+            <select name="{{../id}}.forms.{{key}}" aria-label="{{label}}: {{../label}}">
+              {{selectOptions ../formChoices selected=value}}
+            </select>
+          </label>
+          {{/each}}
+          {{else}}
+          <span class="stt-muted">{{localize "STT.Fields.onlyThem"}}</span>
+          {{/if}}
+        </span>
+        <span class="stt-field-look">
+          {{#if hasDisplay}}
+          <select name="{{id}}.display" aria-label="{{localize "STT.Fields.colLook"}}: {{label}}">
+            {{selectOptions displayChoices selected=config.display}}
+          </select>
+          {{/if}}
+        </span>
+        <span class="stt-field-move">
+          <button type="button" class="stt-icon" data-action="moveUp" {{disabled first}}
+            data-tooltip="{{localize "STT.Fields.up"}}" aria-label="{{localize "STT.Fields.up"}}"><i class="fa-solid fa-arrow-up" inert></i></button>
+          <button type="button" class="stt-icon" data-action="moveDown" {{disabled last}}
+            data-tooltip="{{localize "STT.Fields.down"}}" aria-label="{{localize "STT.Fields.down"}}"><i class="fa-solid fa-arrow-down" inert></i></button>
+          {{#if custom}}
+          <button type="button" class="stt-icon" data-action="removeField"
+            data-tooltip="{{localize "STT.Fields.remove"}}" aria-label="{{localize "STT.Fields.remove"}}"><i class="fa-solid fa-trash" inert></i></button>
+          {{/if}}
+        </span>
+      </li>
+      {{/each}}
+    </ol>
+    <fieldset class="stt-add">
+      <legend>{{localize "STT.Fields.addTitle"}}</legend>
+      <input type="text" name="customLabel" maxlength="40" value="{{draft.label}}" placeholder="{{localize "STT.Fields.customLabel"}}"
+        aria-label="{{localize "STT.Fields.customLabel"}}">
+      <input type="text" name="customPath" value="{{draft.path}}" list="stt-fields-paths" autocomplete="off"
+        placeholder="{{localize "STT.Fields.customPath"}}" aria-label="{{localize "STT.Fields.customPath"}}" spellcheck="false">
+      <button type="button" class="stt-pick-open" data-action="togglePicker" aria-expanded="false" aria-controls="stt-picker"
+        data-tooltip="{{localize "STT.Picker.openHint"}}"><i class="fa-solid fa-list-ul" inert></i> {{localize "STT.Picker.open"}}</button>
+      <select name="customFormat" aria-label="{{localize "STT.Fields.customFormat"}}">{{selectOptions formats selected=draft.format}}</select>
+      <button type="button" data-action="addField"><i class="fa-solid fa-plus" inert></i> {{localize "STT.Fields.add"}}</button>
+      <p class="stt-path-value" aria-live="polite" hidden></p>
+      <p class="stt-hint">{{localize "STT.Fields.customHint"}}</p>
+      <datalist id="stt-fields-paths"></datalist>
+      <div class="stt-picker" id="stt-picker" hidden>
+        <div class="stt-picker-head">
+          <div class="stt-picker-tabs" role="tablist">
+            <button type="button" role="tab" data-action="pickerTab" data-tab="common">{{localize "STT.Picker.common"}}</button>
+            <button type="button" role="tab" data-action="pickerTab" data-tab="all">{{localize "STT.Picker.all"}}</button>
+          </div>
+          <input type="search" name="pickerSearch" autocomplete="off" spellcheck="false"
+            placeholder="{{localize "STT.Picker.search"}}" aria-label="{{localize "STT.Picker.search"}}">
+          <button type="button" class="stt-icon" data-action="togglePicker" data-tooltip="{{localize "STT.Picker.close"}}"
+            aria-label="{{localize "STT.Picker.close"}}"><i class="fa-solid fa-xmark" inert></i></button>
+        </div>
+        <p class="stt-picker-note stt-hint" hidden></p>
+        <div class="stt-picker-list"></div>
+      </div>
+    </fieldset>
+  </section>
+  <aside class="stt-preview">
+    <h3>{{localize "STT.Fields.preview"}}</h3>
+    <p class="stt-hint"><i class="fa-solid fa-crosshairs" inert></i> <span class="stt-preview-token"></span></p>
+    <p class="stt-hint">{{localize "STT.Fields.previewHint"}}</p>
+    <div class="stt-preview-slot" data-viewer="gm">
+      <span class="stt-preview-who">{{localize "STT.Fields.asGM"}}</span>
+      <div class="stt-tooltip"></div>
+    </div>
+    <div class="stt-preview-slot" data-viewer="owner">
+      <span class="stt-preview-who">{{localize "STT.Fields.asOwner"}}</span>
+      <div class="stt-tooltip"></div>
+    </div>
+    <div class="stt-preview-slot" data-viewer="other">
+      <span class="stt-preview-who">{{localize "STT.Fields.asOther"}}</span>
+      <select name="previewDisposition" aria-label="{{localize "STT.Fields.previewAs"}}">
+        {{#each dispositions}}
+        <option value="{{key}}" {{#if (eq key ../previewDisposition)}}selected{{/if}}>{{label}}</option>
+        {{/each}}
+      </select>
+      <div class="stt-tooltip"></div>
+    </div>
+  </aside>
+  <footer class="stt-fields-foot">
+    <button type="button" data-action="resetFields"><i class="fa-solid fa-rotate-left" inert></i> {{localize "STT.Fields.reset"}}</button>
+    <button type="submit"><i class="fa-solid fa-floppy-disk" inert></i> {{localize "STT.Fields.save"}}</button>
+  </footer>
+</div>

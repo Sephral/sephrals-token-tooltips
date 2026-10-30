@@ -1,0 +1,264 @@
+{
+  "STT": {
+    "gear": "Einstellungen",
+    "LANGUAGE": {
+      "default": "Wie Foundry",
+      "de": "Deutsch",
+      "en": "English"
+    },
+    "SETTINGS": {
+      "uiLanguage": {
+        "name": "Sprache des Moduls",
+        "hint": "Sprache von Token Tooltips auf diesem Gerät. \"Wie Foundry\" folgt der Sprache von Foundry."
+      },
+      "theme": {
+        "name": "Aussehen",
+        "hint": "Signature zeigt die Tooltips auf warmem Papier, Foundry hält sie dunkel wie den Rest von Foundry.",
+        "signature": "Signature (Papier)",
+        "foundry": "Foundry (dunkel)"
+      },
+      "enabled": {
+        "name": "Tooltips zeigen",
+        "hint": "Tooltips erscheinen, wenn der Mauszeiger auf einem Token ruht. Aus: keine Tooltips auf diesem Gerät."
+      },
+      "delay": {
+        "name": "Verzögerung (Millisekunden)",
+        "hint": "Wie lange der Mauszeiger auf einem Token ruht, bevor sein Tooltip erscheint."
+      },
+      "position": {
+        "name": "Position",
+        "hint": "Wo der Tooltip neben dem Token erscheint. Ist dort kein Platz, wechselt er auf die andere Seite.",
+        "right": "Rechts vom Token",
+        "above": "Über dem Token",
+        "below": "Unter dem Token"
+      },
+      "size": {
+        "name": "Größe",
+        "hint": "Textgröße der Tooltips auf diesem Gerät.",
+        "small": "Klein",
+        "normal": "Normal",
+        "large": "Groß"
+      },
+      "respectNames": {
+        "name": "Namensanzeige jedes Tokens beachten",
+        "hint": "Spieler sehen den Namen eines Tokens im Tooltip nur, wenn der Token seinen Namen allen beim Überfahren oder immer zeigt. Aus: Der Name folgt nur den Feldeinstellungen."
+      }
+    },
+    "Keys": {
+      "showAll": "Alle Tooltips zeigen",
+      "showAllHint": "Solange die Taste gedrückt ist, zeigt jeder sichtbare Token seinen Tooltip."
+    },
+    "Fields": {
+      "title": "Felder der Tooltips",
+      "menuLabel": "Felder einstellen",
+      "menuHint": "Wähle, welche Werte die Tooltips zeigen, in welcher Reihenfolge und wer sie sieht, genau oder nur beschrieben. Eigene Werte kommen über einen Datenpfad dazu.",
+      "heading": "Was die Tooltips zeigen",
+      "intro": "Felder der Vorlage {preset} für {system}. Besitzer, Beobachter und SL sehen jedes Feld, das für sie gedacht ist, genau. Für alle anderen wählst du je Gesinnung des Tokens, mit einer eigenen Spalte für die Charaktere der anderen Spieler.",
+      "colShow": "Zeigen",
+      "colField": "Feld",
+      "colAudience": "Wer sieht es",
+      "colOthers": "Alle anderen sehen es",
+      "colLook": "Darstellung",
+      "external": "von einem Modul ergänzt",
+      "onlyThem": "Sonst niemand",
+      "up": "Nach oben",
+      "down": "Nach unten",
+      "remove": "Feld entfernen",
+      "addTitle": "Eigenes Feld hinzufügen",
+      "customLabel": "Bezeichnung",
+      "customPath": "Datenpfad, z. B. system.attributes.hp",
+      "customFormat": "Format",
+      "add": "Hinzufügen",
+      "customHint": "Wähle einen üblichen Wert oder einen beliebigen Wert des ausgewählten Tokens, oder tippe einen Pfad in die Daten des Akteurs. Beginnt er mit token., liest er stattdessen den Token. Ressource und Zähler brauchen ein Objekt mit value und max.",
+      "preview": "Vorschau",
+      "previewHint": "Wähle einen Token in der Szene aus, um ihn hier zu sehen.",
+      "asGM": "Als SL",
+      "asOwner": "Als Besitzer oder Beobachter",
+      "asOther": "Als anderer Spieler",
+      "previewAs": "Gesinnung für die Vorschau",
+      "ownDisposition": "Gesinnung des Tokens",
+      "noToken": "Kein Token in dieser Szene",
+      "nothing": "Nichts zu zeigen",
+      "invalidCustom": "Das Feld braucht eine Bezeichnung und einen Datenpfad aus Buchstaben, Ziffern, Punkten und Unterstrichen.",
+      "reset": "Auf Standard zurücksetzen",
+      "resetConfirm": "Alle Felder dieses Systems auf ihren Standard zurücksetzen und eigene Felder entfernen? Erst Speichern übernimmt es.",
+      "save": "Speichern",
+      "saved": "Die Felder der Tooltips sind gespeichert."
+    },
+    "Picker": {
+      "open": "Wählen…",
+      "openHint": "Einen Wert aus den üblichen Werten dieses Systems oder aus allen Werten des ausgewählten Tokens wählen",
+      "common": "Übliche Werte",
+      "all": "Alle Werte",
+      "search": "Suchen nach Name, Pfad oder Wert",
+      "valuesOf": "Alle Werte von {name}",
+      "noToken": "Wähle einen Token in der Szene aus, um hier alle seine Werte zu sehen.",
+      "noCommon": "Für dieses System gibt es keine Liste üblicher Werte. Alle Werte zeigt jeden Wert des ausgewählten Tokens.",
+      "nothing": "Nichts gefunden.",
+      "inUse": "Schon ein Feld",
+      "more": "{count} weitere Werte. Die Suche grenzt die Liste ein.",
+      "valueAt": "Wert bei {name}: {value}",
+      "notFound": "{name} hat unter diesem Pfad keinen Wert.",
+      "noFit": "Wert bei {name}: {value}. Als {format} zeigt der Tooltip dafür nichts.",
+      "noPreviewToken": "Wähle einen Token aus, um hier seinen Wert zu sehen.",
+      "close": "Schließen"
+    },
+    "Preset": {
+      "dnd5e": "D&D 5e",
+      "pf2e": "Pathfinder 2e",
+      "swade": "Savage Worlds",
+      "crucible": "Crucible",
+      "generic": "Token-Leisten"
+    },
+    "Choice": {
+      "gm": "Nur SL",
+      "owner": "SL, Besitzer, Beobachter",
+      "everyone": "Alle",
+      "exact": "Genau",
+      "descriptive": "Beschrieben",
+      "hidden": "Verborgen",
+      "both": "Leiste und Zahlen",
+      "bar": "Leiste",
+      "number": "Zahlen"
+    },
+    "Type": {
+      "name": "Name",
+      "resource": "Ressource",
+      "count": "Zähler",
+      "number": "Zahl",
+      "text": "Text",
+      "movement": "Bewegung",
+      "effects": "Effekte",
+      "cr": "Herausforderungsgrad",
+      "bar": "Token-Leiste",
+      "list": "Liste",
+      "modifier": "Modifikator",
+      "die": "Würfel",
+      "senses": "Sinne"
+    },
+    "Disposition": {
+      "party": "Gruppenmitglied",
+      "friendly": "Freundlich",
+      "neutral": "Neutral",
+      "hostile": "Feindlich",
+      "secret": "Geheim"
+    },
+    "Field": {
+      "name": "Name",
+      "hp": "TP",
+      "tempHp": "Temporäre TP",
+      "ac": "RK",
+      "speed": "Bewegung",
+      "passivePerception": "Passive Wahrnehmung",
+      "level": "Stufe",
+      "cr": "HG",
+      "effects": "Effekte und Zustände",
+      "perception": "Wahrnehmung",
+      "fortitude": "Zähigkeit",
+      "reflex": "Reflex",
+      "will": "Wille",
+      "wounds": "Wunden",
+      "fatigue": "Erschöpfung",
+      "parry": "Parade",
+      "toughness": "Robustheit",
+      "pace": "Bewegung",
+      "bennies": "Bennies",
+      "health": "Gesundheit",
+      "morale": "Moral",
+      "madness": "Wahnsinn",
+      "physical": "Physische Verteidigung",
+      "willpower": "Willenskraft",
+      "stride": "Schrittweite",
+      "bar1": "Leiste 1",
+      "bar2": "Leiste 2",
+      "passiveInsight": "Motiv erkennen (passiv)",
+      "passiveInvestigation": "Nachforschungen (passiv)",
+      "spellDc": "Zauber-SG",
+      "inspiration": "Inspiration",
+      "senses": "Sinne",
+      "heroPoints": "Heldenpunkte",
+      "focusPoints": "Fokuspunkte",
+      "classDc": "Klassen-SG",
+      "runDie": "Rennwürfel",
+      "powerPoints": "Machtpunkte",
+      "rank": "Rang",
+      "actionPoints": "Aktionspunkte",
+      "focus": "Fokus",
+      "heroism": "Heldentum"
+    },
+    "Health": {
+      "unhurt": "Unverletzt",
+      "wounded": "Verletzt",
+      "bloodied": "Angeschlagen",
+      "critical": "Dem Tode nah",
+      "down": "Am Boden"
+    },
+    "Move": {
+      "walk": "gehen",
+      "fly": "fliegen",
+      "hover": "fliegen (schweben)",
+      "swim": "schwimmen",
+      "climb": "klettern",
+      "burrow": "graben"
+    },
+    "Sense": {
+      "darkvision": "Dunkelsicht",
+      "blindsight": "Blindsicht",
+      "tremorsense": "Erschütterungssinn",
+      "truesight": "Wahre Sicht"
+    },
+    "Value": {
+      "yes": "Ja"
+    },
+    "Group": {
+      "often": "Im Spiel oft gebraucht",
+      "resources": "Ressourcen",
+      "spells": "Zauber",
+      "defenses": "Verteidigung",
+      "abilities": "Attribute und Fertigkeiten",
+      "currency": "Währung",
+      "progression": "Fortschritt",
+      "traits": "Merkmale"
+    },
+    "Path": {
+      "deathSuccesses": "Todesrettungswürfe: Erfolge",
+      "deathFailures": "Todesrettungswürfe: Fehlschläge",
+      "spellSlots": "Zauberplätze Grad {level}",
+      "spellAbility": "Attribut zum Zaubern",
+      "modifier": "{name} (Modifikator)",
+      "shieldHp": "Schild-TP",
+      "shieldRaised": "Schild erhoben",
+      "shieldBonus": "Schildbonus",
+      "passive": "{name} (passiv)",
+      "resistance": "Resistenz {name}",
+      "threat": "Bedrohung",
+      "languages": "Sprachen"
+    },
+    "SELFTEST": {
+      "Title": "Selbsttest von Token Tooltips",
+      "Run": "Selbsttest starten",
+      "Hint": "Prüft die Teile von Foundry, die die Tooltips nutzen, liest jedes Feld von einem Token der angezeigten Szene und zeichnet einen Test-Tooltip. Das Ergebnis kommt als Flüstern in den Chat.",
+      "Hover": "Foundrys Erkennung für Mauszeiger über Tokens wurde nicht gefunden.",
+      "Canvas": "Foundrys Umrechnung von der Karte auf den Bildschirm wurde nicht gefunden.",
+      "Constants": "Foundrys Gesinnungen oder Namensanzeigen von Tokens wurden nicht gefunden.",
+      "Storage": "Der Speicherort \"{key}\" fehlt.",
+      "Texts": "Texte fehlen: {keys}",
+      "Generic": "{system} hat keine eigene Vorlage, die Tooltips zeigen die Token-Leisten und Effekte. Weitere Werte kommen als eigene Felder dazu.",
+      "Read": "Diese Felder ließen sich bei {token} nicht lesen: {fields}",
+      "Draw": "Der Test-Tooltip für {token} ließ sich nicht zeichnen.",
+      "NoToken": "In der angezeigten Szene gibt es keinen Token, deshalb wurde kein Feld gelesen. Öffne eine Szene mit Tokens und starte den Test erneut.",
+      "Disabled": "Die Tooltips sind in den Einstellungen dieses Geräts abgeschaltet.",
+      "Problems": "Token Tooltips: {problems} von {checks} Prüfungen fehlgeschlagen.",
+      "Passed": "Token Tooltips: alle {checks} Prüfungen bestanden.",
+      "Version": "Foundry {current}, geprüft mit {tested}. {system}, geprüft mit {systemTested}.",
+      "NewVersions": "Token Tooltips wurde mit älteren Versionen geprüft ({versions} ist neuer). Der Selbsttest in den Moduleinstellungen prüft es."
+    },
+    "DEBUG": {
+      "Title": "Debug-Datei",
+      "Save": "Debug-Datei speichern",
+      "Hint": "Speichert eine Datei für Fehlerberichte über alle Module von Sephral in dieser Welt: Versionen, Einstellungen und was die Module aufgezeichnet haben, etwa die letzten Chatnachrichten, die sie gelesen haben. Sie enthält Chattext und Flüsternachrichten, prüfe sie vor dem Teilen.",
+      "Entry": "Debug-Datei speichern (Sephral’s Module)",
+      "Saved": "Debug-Datei {file} gespeichert. Sie enthält Chattext und Flüsternachrichten, prüfe sie vor dem Teilen."
+    }
+  }
+}

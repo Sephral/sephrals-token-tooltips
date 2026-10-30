@@ -1,0 +1,34 @@
+{
+  "id": "sephrals-token-tooltips",
+  "title": "Sephral’s Token Tooltips",
+  "description": "Hover over a token and see what matters at a glance: health as a number, a bar or a word like bloodied, armor, speed and conditions. The GM decides per value who sees it, exact or only described, for friends, neutrals and foes.",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": 13,
+    "verified": "14.369"
+  },
+  "authors": [
+    {
+      "name": "Sephral"
+    }
+  ],
+  "url": "https://github.com/Sephral/sephrals-token-tooltips.git",
+  "esmodules": [
+    "scripts/stt.mjs"
+  ],
+  "styles": [
+    "styles/stt.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "de",
+      "name": "Deutsch",
+      "path": "lang/de.json"
+    }
+  ]
+}

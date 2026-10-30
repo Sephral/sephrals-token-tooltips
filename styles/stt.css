@@ -1,0 +1,765 @@
+/* Sephral’s Token Tooltips */
+
+/* Colors: the warm signature look by default, the dark Foundry look per user */
+.stt-tooltip,
+.stt-app {
+  --stt-paper: #fbf6ea;
+  --stt-paper-2: #f3ecde;
+  --stt-ink: #1f1a17;
+  --stt-muted: #6f655d;
+  --stt-line: rgb(73 49 32 / 0.16);
+  --stt-soft: rgb(73 49 32 / 0.07);
+  --stt-field: #fffdf7;
+  --stt-accent: #b5512d;
+  --stt-accent-soft: rgb(181 81 45 / 0.12);
+  --stt-track: rgb(73 49 32 / 0.14);
+  --stt-good: #3f8f4f;
+  --stt-fair: #a7962a;
+  --stt-poor: #c8742a;
+  --stt-bad: #b8322c;
+  --stt-down: #6a5f58;
+  --stt-party: #2f6fa8;
+  --stt-friendly: #3f8f4f;
+  --stt-neutral: #b5952a;
+  --stt-hostile: #b8322c;
+  --stt-secret: #7b4fa6;
+  --stt-radius: 10px;
+  --stt-shadow: 0 6px 20px rgb(40 24 12 / 0.28);
+}
+
+.stt-tooltip[data-stt-theme="foundry"],
+.stt-app[data-stt-theme="foundry"] {
+  --stt-paper: #24211e;
+  --stt-paper-2: #1c1a18;
+  --stt-ink: #ece5d8;
+  --stt-muted: #aba191;
+  --stt-line: rgb(255 255 255 / 0.13);
+  --stt-soft: rgb(255 255 255 / 0.06);
+  --stt-field: rgb(0 0 0 / 0.25);
+  --stt-accent: #d8784e;
+  --stt-accent-soft: rgb(216 120 78 / 0.18);
+  --stt-track: rgb(255 255 255 / 0.12);
+  --stt-good: #5fb56e;
+  --stt-fair: #cdbb4a;
+  --stt-poor: #e08c43;
+  --stt-bad: #e0574f;
+  --stt-down: #8e847c;
+  --stt-radius: 6px;
+  --stt-shadow: 0 6px 20px rgb(0 0 0 / 0.5);
+}
+
+/* -------------------------------------------- */
+/*  The tooltips over the canvas                */
+/* -------------------------------------------- */
+
+/* Above the canvas and Foundry's token HUD, below windows, the interface and the floating bars of other modules
+   (Token Action HUD sits at 20) */
+#stt-layer {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-index-canvas, 0) + 10);
+  pointer-events: none;
+}
+
+.stt-tooltip {
+  --stt-scale: 1;
+  position: fixed;
+  /* Placed with a transform from the corner of the window */
+  left: 0;
+  top: 0;
+  min-width: calc(150px * var(--stt-scale));
+  max-width: calc(280px * var(--stt-scale));
+  padding: calc(7px * var(--stt-scale)) calc(10px * var(--stt-scale));
+  border: 1px solid var(--stt-line);
+  border-radius: var(--stt-radius);
+  background: linear-gradient(180deg, var(--stt-paper) 0%, var(--stt-paper-2) 100%);
+  color: var(--stt-ink);
+  box-shadow: var(--stt-shadow);
+  font-family: var(--font-body, "Signika", sans-serif);
+  font-size: calc(13px * var(--stt-scale));
+  line-height: 1.3;
+  pointer-events: none;
+  animation: stt-in 0.12s ease-out;
+}
+
+#stt-layer .stt-tooltip[hidden],
+#stt-layer .stt-tooltip.stt-offscreen {
+  display: none;
+}
+
+.stt-tooltip[data-size="small"] {
+  --stt-scale: 0.85;
+}
+
+.stt-tooltip[data-size="large"] {
+  --stt-scale: 1.2;
+}
+
+/* The tooltips of all tokens at once: a little smaller, flat and without a shadow, each on its own layer, so that
+   panning with many of them on the screen moves them without painting them again (drawing a hundred shadows each
+   frame stutters on computers without a graphics card) */
+.stt-tooltip.stt-compact {
+  --stt-scale: 0.85;
+  animation: none;
+  will-change: transform;
+  background: var(--stt-paper);
+  box-shadow: none;
+}
+
+.stt-tooltip.stt-compact[data-size="large"] {
+  --stt-scale: 1;
+}
+
+@keyframes stt-in {
+  from { opacity: 0; translate: 0 2px; }
+  to { opacity: 1; translate: none; }
+}
+
+.stt-tooltip .stt-name {
+  font-weight: 700;
+  font-size: 1.08em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stt-tooltip .stt-name + .stt-rows {
+  margin-top: calc(5px * var(--stt-scale));
+  padding-top: calc(5px * var(--stt-scale));
+  border-top: 1px solid var(--stt-line);
+}
+
+.stt-tooltip .stt-rows {
+  display: grid;
+  gap: calc(4px * var(--stt-scale));
+}
+
+.stt-tooltip .stt-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.stt-tooltip .stt-label {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--stt-muted);
+  white-space: nowrap;
+}
+
+.stt-tooltip .stt-label i {
+  width: 1.1em;
+  text-align: center;
+  font-size: 0.9em;
+  opacity: 0.85;
+}
+
+.stt-tooltip .stt-value {
+  margin-left: auto;
+  font-weight: 600;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.stt-tooltip .stt-row[data-kind="word"] .stt-value {
+  color: var(--stt-tone, var(--stt-ink));
+}
+
+.stt-tooltip .stt-row[data-tone="good"] { --stt-tone: var(--stt-good); }
+.stt-tooltip .stt-row[data-tone="fair"] { --stt-tone: var(--stt-fair); }
+.stt-tooltip .stt-row[data-tone="poor"] { --stt-tone: var(--stt-poor); }
+.stt-tooltip .stt-row[data-tone="bad"] { --stt-tone: var(--stt-bad); }
+.stt-tooltip .stt-row[data-tone="down"] { --stt-tone: var(--stt-down); }
+
+/* A bar, with the numbers next to it */
+.stt-tooltip .stt-bar {
+  position: relative;
+  flex: 1;
+  min-width: calc(70px * var(--stt-scale));
+  height: calc(8px * var(--stt-scale));
+  border-radius: 999px;
+  background: var(--stt-track);
+  overflow: hidden;
+}
+
+.stt-tooltip .stt-bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  background: var(--stt-tone, var(--stt-good));
+}
+
+.stt-tooltip .stt-bar + .stt-value {
+  margin-left: 0;
+  flex: none;
+  min-width: 3.4em;
+}
+
+/* Effects and conditions */
+.stt-tooltip .stt-effects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(4px * var(--stt-scale));
+}
+
+.stt-tooltip .stt-effect {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 1px 6px 1px 2px;
+  border-radius: 999px;
+  background: var(--stt-soft);
+  font-size: 0.9em;
+}
+
+.stt-tooltip .stt-effect img {
+  width: calc(18px * var(--stt-scale));
+  height: calc(18px * var(--stt-scale));
+  border: none;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgb(0 0 0 / 0.55);
+}
+
+.stt-tooltip .stt-effect span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stt-tooltip .stt-empty {
+  color: var(--stt-muted);
+  font-style: italic;
+}
+
+/* -------------------------------------------- */
+/*  Field configuration                         */
+/* -------------------------------------------- */
+
+.stt-app .window-content {
+  padding: 0;
+  background: linear-gradient(180deg, var(--stt-paper) 0%, var(--stt-paper-2) 100%);
+  color: var(--stt-ink);
+}
+
+.stt-fields-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 270px;
+  grid-template-rows: minmax(0, 1fr) auto;
+  height: 100%;
+  min-height: 0;
+}
+
+.stt-fields-main {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 12px 14px 10px;
+  gap: 8px;
+}
+
+.stt-fields-head h2 {
+  margin: 0;
+  border: none;
+  font-size: 18px;
+  color: var(--stt-ink);
+}
+
+.stt-app .stt-eyebrow {
+  margin: 0 0 2px;
+  color: var(--stt-accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stt-app .stt-hint {
+  margin: 4px 0 0;
+  color: var(--stt-muted);
+  font-size: 12px;
+}
+
+.stt-app .stt-muted {
+  color: var(--stt-muted);
+  font-size: 12px;
+}
+
+.stt-field-columns,
+.stt-field {
+  display: grid;
+  grid-template-columns: 30px minmax(150px, 1fr) 160px minmax(480px, 3.4fr) 120px 82px;
+  align-items: center;
+  gap: 6px;
+}
+
+.stt-field-columns {
+  padding: 0 8px;
+  color: var(--stt-muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stt-field-list {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  display: grid;
+  align-content: start;
+  gap: 4px;
+}
+
+.stt-field {
+  padding: 5px 8px;
+  border: 1px solid var(--stt-line);
+  border-radius: var(--stt-radius);
+  background: var(--stt-field);
+}
+
+/* A field that is off fades, its switch stays clear to find (fields often needed in play start off) */
+.stt-field.off > :not(.stt-field-on) {
+  opacity: 0.6;
+}
+
+.stt-app[data-stt-theme="foundry"] .stt-field-on input[type="checkbox"]:not(:checked) {
+  box-shadow: 0 0 0 1px var(--stt-muted);
+}
+
+.stt-field-on {
+  display: grid;
+  place-items: center;
+}
+
+.stt-field-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-weight: 600;
+}
+
+.stt-field-name > i {
+  width: 18px;
+  text-align: center;
+  color: var(--stt-accent);
+}
+
+.stt-field-name small {
+  display: block;
+  color: var(--stt-muted);
+  font-size: 11px;
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stt-field-name code {
+  font-size: 10px;
+}
+
+.stt-app select,
+.stt-app input[type="text"],
+.stt-app input[type="search"] {
+  height: 28px;
+  min-width: 0;
+  border: 1px solid var(--stt-line);
+  border-radius: 6px;
+  background: var(--stt-field);
+  color: var(--stt-ink);
+  font-size: 12px;
+}
+
+/* A slim drawn arrow instead of the browser's wide one, so the five form columns keep room for their words */
+.stt-app select {
+  appearance: none;
+  padding: 0 18px 0 7px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--stt-muted) 50%),
+    linear-gradient(135deg, var(--stt-muted) 50%, transparent 50%);
+  background-position: calc(100% - 11px) 50%, calc(100% - 7px) 50%;
+  background-size: 4px 4px, 4px 4px;
+  background-repeat: no-repeat;
+  text-overflow: ellipsis;
+}
+
+.stt-app[data-stt-theme="signature"] select option {
+  background: #fffdf7;
+  color: #1f1a17;
+}
+
+.stt-forms {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.stt-forms .stt-muted {
+  grid-column: 1 / -1;
+}
+
+.stt-form {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+}
+
+.stt-app .stt-form select {
+  flex: 1;
+  width: 100%;
+  padding: 0 12px 0 4px;
+  background-position: calc(100% - 8px) 50%, calc(100% - 4px) 50%;
+}
+
+.stt-disposition-dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--stt-neutral);
+}
+
+.stt-form[data-disposition="party"] .stt-disposition-dot { background: var(--stt-party); }
+.stt-form[data-disposition="friendly"] .stt-disposition-dot { background: var(--stt-friendly); }
+.stt-form[data-disposition="hostile"] .stt-disposition-dot { background: var(--stt-hostile); }
+.stt-form[data-disposition="secret"] .stt-disposition-dot { background: var(--stt-secret); }
+
+.stt-field-look select {
+  width: 100%;
+}
+
+.stt-field-move {
+  display: flex;
+  justify-content: flex-end;
+  gap: 2px;
+}
+
+.stt-app .stt-icon {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--stt-muted);
+  font-size: 12px;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.stt-app .stt-icon:hover:not(:disabled) {
+  background: var(--stt-soft);
+  color: var(--stt-ink);
+}
+
+.stt-app .stt-icon:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.stt-add {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) auto 130px auto;
+  gap: 6px;
+  align-items: center;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px dashed var(--stt-line);
+  border-radius: var(--stt-radius);
+}
+
+.stt-add legend {
+  padding: 0 4px;
+  color: var(--stt-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.stt-add .stt-hint,
+.stt-add .stt-path-value {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+/* The value of the typed path on the preview token */
+.stt-add .stt-path-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--stt-good);
+}
+
+.stt-add .stt-path-value.missing {
+  color: var(--stt-poor);
+}
+
+.stt-add .stt-path-value[hidden] {
+  display: none;
+}
+
+.stt-app button {
+  color: var(--stt-ink);
+}
+
+.stt-add > button,
+.stt-fields-foot button {
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--stt-line);
+  border-radius: 6px;
+  background: var(--stt-soft);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.stt-add > .stt-pick-open.active {
+  background: var(--stt-accent-soft);
+  border-color: var(--stt-accent);
+}
+
+.stt-fields-foot button[type="submit"] {
+  background: var(--stt-accent);
+  border-color: var(--stt-accent);
+  color: #fffaf0;
+}
+
+.stt-preview {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  padding: 12px;
+  border-left: 1px solid var(--stt-line);
+  background: var(--stt-soft);
+  overflow-y: auto;
+}
+
+.stt-preview h3 {
+  margin: 0;
+  border: none;
+  font-size: 15px;
+  color: var(--stt-ink);
+}
+
+.stt-preview .stt-hint {
+  margin: 0;
+}
+
+.stt-preview-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stt-preview-who {
+  color: var(--stt-muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* The preview tooltips sit in the window instead of floating */
+.stt-preview .stt-tooltip {
+  position: static;
+  max-width: none;
+  animation: none;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.12);
+}
+
+.stt-fields-foot {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--stt-line);
+}
+
+/* -------------------------------------------- */
+/*  Picker of data paths                        */
+/* -------------------------------------------- */
+
+/* Opens above the add row (and its legend), over the field list */
+.stt-picker {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 14px);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 460px;
+  border: 1px solid var(--stt-line);
+  border-radius: var(--stt-radius);
+  background: linear-gradient(180deg, var(--stt-paper) 0%, var(--stt-paper-2) 100%);
+  box-shadow: var(--stt-shadow);
+}
+
+.stt-picker[hidden] {
+  display: none;
+}
+
+.stt-picker-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--stt-line);
+}
+
+.stt-picker-tabs {
+  flex: none;
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 8px;
+  background: var(--stt-soft);
+}
+
+.stt-app .stt-picker-tabs button {
+  height: 26px;
+  margin: 0;
+  padding: 0 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--stt-muted);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: none;
+}
+
+.stt-app .stt-picker-tabs button.active {
+  background: var(--stt-field);
+  color: var(--stt-ink);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+}
+
+.stt-picker-head input[type="search"] {
+  flex: 1;
+  padding: 0 8px;
+}
+
+/* The close button next to it is enough */
+.stt-picker-head input[type="search"]::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.stt-app .stt-picker-note {
+  margin: 0;
+  padding: 6px 12px 0;
+}
+
+.stt-picker-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 2px 6px 8px;
+}
+
+.stt-pick-group h4 {
+  margin: 8px 8px 3px;
+  border: none;
+  font-family: inherit;
+  color: var(--stt-accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.stt-app .stt-pick {
+  display: grid;
+  grid-template-columns: minmax(120px, 1.1fr) minmax(0, 1.5fr) minmax(70px, 0.9fr) 110px;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: auto;
+  min-height: 28px;
+  margin: 0;
+  padding: 3px 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--stt-ink);
+  font-size: 12px;
+  line-height: 1.3;
+  text-align: left;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.stt-app .stt-pick:hover,
+.stt-app .stt-pick:focus-visible {
+  border-color: var(--stt-line);
+  background: var(--stt-accent-soft);
+}
+
+.stt-pick > span,
+.stt-pick > code {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stt-pick-label {
+  font-weight: 600;
+}
+
+.stt-app .stt-pick-path {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--stt-muted);
+  font-size: 11px;
+}
+
+.stt-pick-format {
+  color: var(--stt-muted);
+  font-size: 11px;
+  text-align: right;
+}
+
+.stt-pick.missing .stt-pick-value {
+  color: var(--stt-muted);
+}
+
+.stt-pick.used {
+  opacity: 0.6;
+}
+
+.stt-app .stt-picker-empty {
+  margin: 10px 8px;
+  color: var(--stt-muted);
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* The column of the switches is narrow: an eye instead of the word */
+.stt-field-columns .stt-col-show {
+  text-align: center;
+  font-size: 12px;
+}

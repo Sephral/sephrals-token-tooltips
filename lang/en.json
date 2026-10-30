@@ -1,0 +1,264 @@
+{
+  "STT": {
+    "gear": "Settings",
+    "LANGUAGE": {
+      "default": "Like Foundry",
+      "de": "Deutsch",
+      "en": "English"
+    },
+    "SETTINGS": {
+      "uiLanguage": {
+        "name": "Module language",
+        "hint": "Language of Token Tooltips on this device. \"Like Foundry\" follows Foundry's language."
+      },
+      "theme": {
+        "name": "Look",
+        "hint": "Signature shows the tooltips on warm paper, Foundry keeps them dark like the rest of Foundry.",
+        "signature": "Signature (paper)",
+        "foundry": "Foundry (dark)"
+      },
+      "enabled": {
+        "name": "Show tooltips",
+        "hint": "Tooltips appear when you rest the pointer on a token. Off: no tooltips on this device."
+      },
+      "delay": {
+        "name": "Delay (milliseconds)",
+        "hint": "How long the pointer rests on a token before its tooltip appears."
+      },
+      "position": {
+        "name": "Position",
+        "hint": "Where the tooltip appears next to the token. It moves to the other side when there is no room.",
+        "right": "Right of the token",
+        "above": "Above the token",
+        "below": "Below the token"
+      },
+      "size": {
+        "name": "Size",
+        "hint": "Text size of the tooltips on this device.",
+        "small": "Small",
+        "normal": "Normal",
+        "large": "Large"
+      },
+      "respectNames": {
+        "name": "Follow the name display of each token",
+        "hint": "Players only see a token's name in the tooltip when the token shows its name to everyone on hover or always. Off: the name follows the field settings alone."
+      }
+    },
+    "Keys": {
+      "showAll": "Show all tooltips",
+      "showAllHint": "While the key is held, every visible token shows its tooltip."
+    },
+    "Fields": {
+      "title": "Tooltip fields",
+      "menuLabel": "Configure fields",
+      "menuHint": "Choose the values the tooltips show, their order and who sees them, exact or only described. Add your own values from a data path.",
+      "heading": "What the tooltips show",
+      "intro": "Fields of the {preset} preset for {system}. Owners, observers and the GM see every field meant for them exactly. For everyone else you choose per token disposition, with a column of its own for the other players' characters.",
+      "colShow": "Show",
+      "colField": "Field",
+      "colAudience": "Who sees it",
+      "colOthers": "Everyone else sees it",
+      "colLook": "Look",
+      "external": "added by a module",
+      "onlyThem": "Nobody else",
+      "up": "Move up",
+      "down": "Move down",
+      "remove": "Remove field",
+      "addTitle": "Add your own field",
+      "customLabel": "Label",
+      "customPath": "Data path, e.g. system.attributes.hp",
+      "customFormat": "Format",
+      "add": "Add",
+      "customHint": "Pick a common value or any value of the selected token, or type a path into the actor's data. Start it with token. to read the token instead. Resource and count need an object with value and max.",
+      "preview": "Preview",
+      "previewHint": "Select a token on the scene to see it here.",
+      "asGM": "As GM",
+      "asOwner": "As owner or observer",
+      "asOther": "As another player",
+      "previewAs": "Disposition for the preview",
+      "ownDisposition": "The token's own disposition",
+      "noToken": "No token on this scene",
+      "nothing": "Nothing to show",
+      "invalidCustom": "The field needs a label and a data path of letters, digits, dots and underscores.",
+      "reset": "Reset to defaults",
+      "resetConfirm": "Reset every field of this system to its default and remove your own fields? Nothing changes until you save.",
+      "save": "Save",
+      "saved": "The tooltip fields are saved."
+    },
+    "Picker": {
+      "open": "Pick…",
+      "openHint": "Pick a value from the common values of this system or from all values of the selected token",
+      "common": "Common values",
+      "all": "All values",
+      "search": "Search by name, path or value",
+      "valuesOf": "Every value of {name}",
+      "noToken": "Select a token on the scene to see all its values here.",
+      "noCommon": "This system has no list of common values. All values lists every value of the selected token.",
+      "nothing": "Nothing found.",
+      "inUse": "Already a field",
+      "more": "{count} more values. Search to narrow the list.",
+      "valueAt": "Value at {name}: {value}",
+      "notFound": "{name} has no value at this path.",
+      "noFit": "Value at {name}: {value}. As {format} the tooltip shows nothing for it.",
+      "noPreviewToken": "Select a token to see its value here.",
+      "close": "Close"
+    },
+    "Preset": {
+      "dnd5e": "D&D 5e",
+      "pf2e": "Pathfinder 2e",
+      "swade": "Savage Worlds",
+      "crucible": "Crucible",
+      "generic": "token bars"
+    },
+    "Choice": {
+      "gm": "GM only",
+      "owner": "GM, owners, observers",
+      "everyone": "Everyone",
+      "exact": "Exact",
+      "descriptive": "Described",
+      "hidden": "Hidden",
+      "both": "Bar and numbers",
+      "bar": "Bar",
+      "number": "Numbers"
+    },
+    "Type": {
+      "name": "Name",
+      "resource": "Resource",
+      "count": "Count",
+      "number": "Number",
+      "text": "Text",
+      "movement": "Speeds",
+      "effects": "Effects",
+      "cr": "Challenge rating",
+      "bar": "Token bar",
+      "list": "List",
+      "modifier": "Modifier",
+      "die": "Die",
+      "senses": "Senses"
+    },
+    "Disposition": {
+      "party": "Party member",
+      "friendly": "Friendly",
+      "neutral": "Neutral",
+      "hostile": "Hostile",
+      "secret": "Secret"
+    },
+    "Field": {
+      "name": "Name",
+      "hp": "HP",
+      "tempHp": "Temp HP",
+      "ac": "AC",
+      "speed": "Speed",
+      "passivePerception": "Passive Perception",
+      "level": "Level",
+      "cr": "CR",
+      "effects": "Effects and conditions",
+      "perception": "Perception",
+      "fortitude": "Fortitude",
+      "reflex": "Reflex",
+      "will": "Will",
+      "wounds": "Wounds",
+      "fatigue": "Fatigue",
+      "parry": "Parry",
+      "toughness": "Toughness",
+      "pace": "Pace",
+      "bennies": "Bennies",
+      "health": "Health",
+      "morale": "Morale",
+      "madness": "Madness",
+      "physical": "Physical defense",
+      "willpower": "Willpower",
+      "stride": "Stride",
+      "bar1": "Bar 1",
+      "bar2": "Bar 2",
+      "passiveInsight": "Passive Insight",
+      "passiveInvestigation": "Passive Investigation",
+      "spellDc": "Spell save DC",
+      "inspiration": "Inspiration",
+      "senses": "Senses",
+      "heroPoints": "Hero Points",
+      "focusPoints": "Focus Points",
+      "classDc": "Class DC",
+      "runDie": "Running die",
+      "powerPoints": "Power Points",
+      "rank": "Rank",
+      "actionPoints": "Action points",
+      "focus": "Focus",
+      "heroism": "Heroism"
+    },
+    "Health": {
+      "unhurt": "Unhurt",
+      "wounded": "Wounded",
+      "bloodied": "Bloodied",
+      "critical": "Near death",
+      "down": "Down"
+    },
+    "Move": {
+      "walk": "walk",
+      "fly": "fly",
+      "hover": "fly (hover)",
+      "swim": "swim",
+      "climb": "climb",
+      "burrow": "burrow"
+    },
+    "Sense": {
+      "darkvision": "darkvision",
+      "blindsight": "blindsight",
+      "tremorsense": "tremorsense",
+      "truesight": "truesight"
+    },
+    "Value": {
+      "yes": "Yes"
+    },
+    "Group": {
+      "often": "Often needed in play",
+      "resources": "Resources",
+      "spells": "Spellcasting",
+      "defenses": "Defenses",
+      "abilities": "Abilities and skills",
+      "currency": "Currency",
+      "progression": "Progression",
+      "traits": "Traits"
+    },
+    "Path": {
+      "deathSuccesses": "Death save successes",
+      "deathFailures": "Death save failures",
+      "spellSlots": "Spell slots level {level}",
+      "spellAbility": "Spellcasting ability",
+      "modifier": "{name} modifier",
+      "shieldHp": "Shield HP",
+      "shieldRaised": "Shield raised",
+      "shieldBonus": "Shield bonus",
+      "passive": "Passive {name}",
+      "resistance": "{name} resistance",
+      "threat": "Threat",
+      "languages": "Languages"
+    },
+    "SELFTEST": {
+      "Title": "Token Tooltips self test",
+      "Run": "Run self test",
+      "Hint": "Checks the parts of Foundry the tooltips use, reads every field from a token of the viewed scene and draws a test tooltip. The result appears as a whisper in the chat.",
+      "Hover": "Foundry's hover handling of tokens was not found.",
+      "Canvas": "Foundry's conversion from the map to the screen was not found.",
+      "Constants": "Foundry's token dispositions or name display modes were not found.",
+      "Storage": "The storage \"{key}\" is missing.",
+      "Texts": "Texts missing: {keys}",
+      "Generic": "{system} has no preset of its own, the tooltips show the token bars and effects. Add more values as your own fields.",
+      "Read": "These fields could not be read from {token}: {fields}",
+      "Draw": "The test tooltip for {token} could not be drawn.",
+      "NoToken": "There is no token on the viewed scene, so no field was read. Open a scene with tokens and run the test again.",
+      "Disabled": "Tooltips are switched off in the settings of this device.",
+      "Problems": "Token Tooltips: {problems} of {checks} checks failed.",
+      "Passed": "Token Tooltips: all {checks} checks passed.",
+      "Version": "Foundry {current}, verified with {tested}. {system}, verified with {systemTested}.",
+      "NewVersions": "Token Tooltips was verified with older versions ({versions} is newer). Run the self test in the module settings to check it."
+    },
+    "DEBUG": {
+      "Title": "Debug file",
+      "Save": "Save debug file",
+      "Hint": "Saves one file for bug reports about all of Sephral’s modules in this world: versions, settings and what the modules recorded, such as the latest chat messages they read. It contains chat text and whispers, check it before you share it.",
+      "Entry": "Save Debug File (Sephral’s Modules)",
+      "Saved": "Debug file {file} saved. It contains chat text and whispers, check it before you share it."
+    }
+  }
+}
