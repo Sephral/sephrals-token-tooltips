@@ -1,6 +1,7 @@
-import {MODULE_ID, setting} from "./config.mjs";
+import {MODULE_ID, TESTED_VERSIONS, setting} from "./config.mjs";
 import {registerDebug} from "./debug.mjs";
 import {saveDebugFile} from "./debug-file.mjs";
+import {registerHubModule} from "./hub.mjs";
 import {openFields, refreshPreview} from "./fields-app.mjs";
 import {applyModuleLanguage} from "./language.mjs";
 import {clear, concerns, hideAll, onDestroyToken, onHoverToken, onRefreshToken, refresh, reposition, showAll,
@@ -11,6 +12,7 @@ import {changeLanguage, registerSettings} from "./settings.mjs";
 import {registerUsage} from "./usage.mjs";
 
 Hooks.once("init", () => {
+  registerHubModule({moduleId: MODULE_ID, tested: TESTED_VERSIONS});
   registerSettings({
     language: value => changeLanguage(value, redraw),
     redraw,

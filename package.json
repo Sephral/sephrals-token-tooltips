@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check scripts/config.mjs && node --check scripts/content.mjs && node --check scripts/debug-file.mjs && node --check scripts/debug.mjs && node --check scripts/fields-app.mjs && node --check scripts/fields.mjs && node --check scripts/format.mjs && node --check scripts/language.mjs && node --check scripts/overlay.mjs && node --check scripts/paths.mjs && node --check scripts/placement.mjs && node --check scripts/presets.mjs && node --check scripts/reader.mjs && node --check scripts/registry.mjs && node --check scripts/selftest.mjs && node --check scripts/settings.mjs && node --check scripts/shortlists.mjs && node --check scripts/stt.mjs && node --check scripts/usage.mjs && node --check scripts/visibility.mjs",
+    "check": "node build/check.mjs",
     "check:manifest": "node build/validate-manifest.mjs",
     "test": "node --test",
     "test:coverage": "node --test --experimental-test-coverage",
