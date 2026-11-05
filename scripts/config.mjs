@@ -10,7 +10,7 @@ export const MODULE_ID = "sephrals-token-tooltips";
 export const TEMPLATES = `modules/${MODULE_ID}/templates`;
 
 /** The Foundry and system versions the module was verified against (see the self-test). */
-export const TESTED_VERSIONS = {core: "14.370", dnd5e: "6.0.6", pf2e: "8.6.1", swade: "6.0.4", crucible: "0.11.2"};
+export const TESTED_VERSIONS = {core: "14.370", dnd5e: "6.0.6", pf2e: "8.6.1", swade: "6.0.4", crucible: "0.11.3"};
 
 /**
  * Read a setting of this module.
