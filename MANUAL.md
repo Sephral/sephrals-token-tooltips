@@ -117,7 +117,7 @@ With the GM’s consent only the active GM’s browser counts, and it sends at m
 * on how many of the last 30 days the module was used
 * whether the GM saw a tooltip and held the key for all tooltips (once per session each), how often the GM saved the fields and added an own field
 * the settings *Look*, *Show tooltips*, *Position*, *Size* and *Follow the name display of each token* (only the chosen option)
-* where errors occur in the module code: file, line and error type, never the error message
+* where errors occur in the module code: file, line, error type and whether the error arose in the module itself, in Foundry, in the game system or in another module, never the error message or the name of another module
 
 No names, values, data paths or other content of the world are sent, and nothing the players do is counted.
 
