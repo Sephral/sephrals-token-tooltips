@@ -42,6 +42,13 @@
       "respectNames": {
         "name": "Follow the name display of each token",
         "hint": "Players only see a token's name in the tooltip when the token shows its name to everyone on hover or always. Off: the name follows the field settings alone."
+      },
+      "floaters": {
+        "name": "Floating numbers",
+        "hint": "A number floats up from a token when its hit points change. Players see it the way the health field of the tooltips allows: exact, described (\"a scratch\", \"badly hurt\") or not at all. The GM and owners see exact numbers.",
+        "replace": "Replace the system's numbers",
+        "missing": "Only where the system shows none",
+        "off": "Off"
       }
     },
     "Keys": {
@@ -251,7 +258,9 @@
       "Problems": "Token Tooltips: {problems} of {checks} checks failed.",
       "Passed": "Token Tooltips: all {checks} checks passed.",
       "Version": "Foundry {current}, verified with {tested}. {system}, verified with {systemTested}.",
-      "NewVersions": "Token Tooltips was verified with older versions ({versions} is newer). Run the self test in the module settings to check it."
+      "NewVersions": "Token Tooltips was verified with older versions ({versions} is newer). Run the self test in the module settings to check it.",
+      "Floaters": "The floating numbers could not be set up: Foundry's call for scrolling text was not found or has an unknown value.",
+      "FloatersOn": "The system floats its own numbers, but the module does not change them (it should in this mode)."
     },
     "DEBUG": {
       "Title": "Debug file",
@@ -259,6 +268,17 @@
       "Hint": "Saves one file for bug reports about all of Sephral’s modules in this world: versions, settings and what the modules recorded, such as the latest chat messages they read. It contains chat text and whispers, check it before you share it.",
       "Entry": "Save Debug File (Sephral’s Modules)",
       "Saved": "Debug file {file} saved. It contains chat text and whispers, check it before you share it."
+    },
+    "Floater": {
+      "scratch": "A scratch",
+      "hurt": "Hurt",
+      "badly": "Badly hurt",
+      "brutal": "A brutal blow",
+      "down": "Down",
+      "healSlight": "A little better",
+      "healSome": "Better",
+      "healMuch": "Much better",
+      "healFull": "Fully healed"
     }
   }
 }

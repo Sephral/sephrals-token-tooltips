@@ -3,6 +3,7 @@ import {registerDebug} from "./debug.mjs";
 import {saveDebugFile} from "./debug-file.mjs";
 import {registerHubModule} from "./hub.mjs";
 import {openFields, refreshPreview} from "./fields-app.mjs";
+import {registerFloaters} from "./floaters.mjs";
 import {applyModuleLanguage} from "./language.mjs";
 import {clear, concerns, hideAll, onDestroyToken, onHoverToken, onRefreshToken, refresh, reposition, showAll,
   watchPointer} from "./overlay.mjs";
@@ -24,8 +25,8 @@ Hooks.once("init", () => {
   });
   // Counted only on the active GM's client, like every Sephral module
   registerUsage(MODULE_ID, {
-    features: ["tooltipSession", "showAllHeld", "fieldsSaved", "customField"],
-    settings: ["theme", "enabled", "position", "size", "respectNames"]
+    features: ["tooltipSession", "showAllHeld", "fieldsSaved", "customField", "floaterShown", "floaterRules"],
+    settings: ["theme", "enabled", "position", "size", "respectNames", "floaters"]
   });
   game.keybindings.register(MODULE_ID, "showAll", {
     name: "STT.Keys.showAll",
@@ -86,6 +87,7 @@ Hooks.once("i18nInit", () => {
 Hooks.once("ready", async () => {
   await languageReady;
   watchPointer();
+  registerFloaters();
   noticeNewVersions();
 });
 

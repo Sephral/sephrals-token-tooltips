@@ -6,6 +6,7 @@
 import {MODULE_ID, TESTED_VERSIONS, esc, fieldLabel, setting, t} from "./config.mjs";
 import {thingToken, tooltipData, tooltipMarkup} from "./content.mjs";
 import {activeFields} from "./fields.mjs";
+import {interceptionInstalled, MODES, sourceFor} from "./floaters.mjs";
 import {presetFor} from "./presets.mjs";
 import {readField} from "./reader.mjs";
 import {currentFields} from "./registry.mjs";
@@ -60,7 +61,15 @@ async function checkAll() {
   for ( const key of ["fieldConfig", "enabled", "delay", "position"] ) {
     check(game.settings.settings.has(`${MODULE_ID}.${key}`), "STT.SELFTEST.Storage", {key});
   }
-  const keys = ["STT.Fields.title", "STT.Health.bloodied", "STT.Field.effects", "STT.Choice.everyone"];
+  // Floating numbers: the call the module changes must exist, and the interception must be in place where it is used
+  const InterfaceGroup = foundry.canvas?.groups?.InterfaceCanvasGroup;
+  check(typeof InterfaceGroup?.prototype?.createScrollingText === "function", "STT.SELFTEST.Floaters");
+  const floaterMode = setting("floaters");
+  check(MODES.includes(floaterMode), "STT.SELFTEST.Floaters");
+  if ( (floaterMode === "replace") && sourceFor(presetFor(game.system.id).id).own ) {
+    check(interceptionInstalled(), "STT.SELFTEST.FloatersOn");
+  }
+  const keys = ["STT.Fields.title", "STT.Floater.scratch", "STT.Floater.healFull", "STT.Health.bloodied", "STT.Field.effects", "STT.Choice.everyone"];
   const missing = keys.filter(key => !game.i18n.has(key));
   check(!missing.length, "STT.SELFTEST.Texts", {keys: missing.join(", ")});
 

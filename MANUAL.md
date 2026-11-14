@@ -25,7 +25,7 @@ Some values are often needed in play but not at every table. They are part of th
 
 Values that a token does not have stay out of its tooltip, for example the CR of a player character or temp HP of zero. Effects and conditions are the ones Foundry draws on the token.
 
-Things get no tooltip: heaps, chests and vaults of the Item Piles module (merchants keep theirs) and loot actors of Pathfinder 2e. A token outside the window gets none either, also when it is hovered through the combat tracker or while Alt is held.
+Things get no tooltip: heaps, chests and vaults of loot pile modules (merchants keep theirs) and loot actors of Pathfinder 2e. A token outside the window gets none either, also when it is hovered through the combat tracker or while Alt is held.
 
 ### Health words
 
@@ -83,6 +83,29 @@ The formats:
 
 Own fields start for the GM, owners and observers. The trash can removes them.
 
+## Floating numbers
+
+When the hit points of a token change, a number floats up from it. Every client decides for itself what its user sees, by the rules of the health field in the field window (audience, form per token disposition, party form). Nothing travels over the network.
+
+| Who | What floats |
+| --- | --- |
+| GM, owners and observers | The exact number, red for damage and green for healing |
+| Others, form *Exact* | The exact number |
+| Others, form *Described* | A description by the size of the blow: *A scratch* (up to a tenth of the maximum), *Hurt* (a quarter), *Badly hurt* (half), *A brutal blow*, *Down* when it ends at zero. Healing: *A little better*, *Better*, *Much better*, *Fully healed* |
+| Others, form *Hidden*, or a health field the GM switched off | Nothing |
+
+Temporary hit points count with the rest. The health field of each preset: *HP* (D&D 5e, Pathfinder 2e), *Health* (Crucible), *Wounds* (Savage Worlds, shown as "+1 Wounds" when one is gained, descriptions without a share) and *Bar 1* (every other system). A heap, a chest and tokens the viewer cannot see float nothing.
+
+### Numbers the system floats itself
+
+D&D 5e, Pathfinder 2e and Crucible float their own exact numbers on every screen, so players would see the hit points of every monster. The setting *Floating numbers* chooses:
+
+* **Replace the system's numbers:** the module changes the system's text on its way to the screen. Exact stays as it is, described becomes the description, hidden drops it. No second number appears. In Crucible only the health number is changed, morale and other texts stay. Savage Worlds and other systems get a number from the module.
+* **Only where the system shows none** (default, so an update changes nothing in a running world): the systems above keep their numbers untouched. Savage Worlds and systems with token bars get the module's numbers.
+* **Off:** the module floats nothing and changes nothing.
+
+Foundry's own client setting *Scrolling Status Text* (core settings) turns every floating number off on a device, also these. Numbers from other modules that are not hit point changes of a token pass unchanged. A module that floats its own hit point numbers in addition cannot be recognized, choose *Off* or *Only where the system shows none* if two numbers appear.
+
 ## Keys
 
 | Key | Does |
@@ -104,6 +127,7 @@ All options are in *Game Settings → Configure Settings → Sephral’s Token T
 | Position | Right of, above or below the token. The tooltip moves to the other side when there is no room, for you |
 | Size | Small, normal or large text, for you |
 | Follow the name display of each token | Names only when the token shows its name to everyone (default on) |
+| Floating numbers | Replace the system's numbers, only where the system shows none (default), or off, for the world (GM) |
 | Configure fields | Opens the field window (GM) |
 | Self test | Checks the module and reads every field from a token of the viewed scene (GM) |
 | Save debug file | One file about all of Sephral’s modules for bug reports (GM), see [Debug file](#debug-file) |
@@ -115,8 +139,8 @@ The module can take part in a small usage report shared by all of Sephral’s mo
 With the GM’s consent only the active GM’s browser counts, and it sends at most one report a day. The counts are kept in a hidden world setting, so all browsers and computers of the GM count together, and turning the statistics off deletes them. A copy of a world gets its own world ID. The question lists everything the report contains, from the Foundry version to a random world ID. For Token Tooltips it holds:
 
 * on how many of the last 30 days the module was used
-* whether the GM saw a tooltip and held the key for all tooltips (once per session each), how often the GM saved the fields and added an own field
-* the settings *Look*, *Show tooltips*, *Position*, *Size* and *Follow the name display of each token* (only the chosen option)
+* whether the GM saw a tooltip and held the key for all tooltips (once per session each), how often the GM saved the fields and added an own field, how many floating numbers the GM's screen showed or ruled on
+* the settings *Look*, *Show tooltips*, *Position*, *Size*, *Follow the name display of each token* and *Floating numbers* (only the chosen option)
 * where errors occur in the module code: file, line, error type and whether the error arose in the module itself, in Foundry, in the game system or in another module, never the error message or the name of another module
 
 No names, values, data paths or other content of the world are sent, and nothing the players do is counted.
@@ -139,7 +163,7 @@ The first button in the module settings, *Sephral’s Modules* (GMs only), opens
 ## Compatibility
 
 * Foundry VTT 13 and 14, any game system. Presets for D&D 5e (5 and 6), Pathfinder 2e, Savage Worlds (5 and 6) and Crucible.
-* The tooltips sit above the map and below windows, the sidebar and the floating bars of other modules such as Token Action HUD.
+* The tooltips sit above the map and below windows, the sidebar and the floating bars of other modules.
 * Like every value that reaches a player's browser, the data behind a tooltip could be read by a player who opens the browser tools. Token Tooltips decides what is shown, not what Foundry sends.
 
 ## API

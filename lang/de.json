@@ -42,6 +42,13 @@
       "respectNames": {
         "name": "Namensanzeige jedes Tokens beachten",
         "hint": "Spieler sehen den Namen eines Tokens im Tooltip nur, wenn der Token seinen Namen allen beim Überfahren oder immer zeigt. Aus: Der Name folgt nur den Feldeinstellungen."
+      },
+      "floaters": {
+        "name": "Schwebende Zahlen",
+        "hint": "Ändern sich die Trefferpunkte eines Tokens, steigt eine Zahl von ihm auf. Spieler sehen sie so, wie das Gesundheitsfeld der Tooltips es erlaubt: genau, umschrieben (\"ein Kratzer\", \"schwer getroffen\") oder gar nicht. SL und Besitzer sehen genaue Zahlen.",
+        "replace": "Zahlen des Systems ersetzen",
+        "missing": "Nur wo das System keine zeigt",
+        "off": "Aus"
       }
     },
     "Keys": {
@@ -251,7 +258,9 @@
       "Problems": "Token Tooltips: {problems} von {checks} Prüfungen fehlgeschlagen.",
       "Passed": "Token Tooltips: alle {checks} Prüfungen bestanden.",
       "Version": "Foundry {current}, geprüft mit {tested}. {system}, geprüft mit {systemTested}.",
-      "NewVersions": "Token Tooltips wurde mit älteren Versionen geprüft ({versions} ist neuer). Der Selbsttest in den Moduleinstellungen prüft es."
+      "NewVersions": "Token Tooltips wurde mit älteren Versionen geprüft ({versions} ist neuer). Der Selbsttest in den Moduleinstellungen prüft es.",
+      "Floaters": "Die schwebenden Zahlen lassen sich nicht einrichten: Foundrys Aufruf für Lauftext fehlt oder hat einen unbekannten Wert.",
+      "FloatersOn": "Das System lässt eigene Zahlen schweben, aber das Modul ändert sie nicht (in diesem Modus sollte es das tun)."
     },
     "DEBUG": {
       "Title": "Debug-Datei",
@@ -259,6 +268,17 @@
       "Hint": "Speichert eine Datei für Fehlerberichte über alle Module von Sephral in dieser Welt: Versionen, Einstellungen und was die Module aufgezeichnet haben, etwa die letzten Chatnachrichten, die sie gelesen haben. Sie enthält Chattext und Flüsternachrichten, prüfe sie vor dem Teilen.",
       "Entry": "Debug-Datei speichern (Sephral’s Module)",
       "Saved": "Debug-Datei {file} gespeichert. Sie enthält Chattext und Flüsternachrichten, prüfe sie vor dem Teilen."
+    },
+    "Floater": {
+      "scratch": "Ein Kratzer",
+      "hurt": "Getroffen",
+      "badly": "Schwer getroffen",
+      "brutal": "Ein wuchtiger Treffer",
+      "down": "Am Boden",
+      "healSlight": "Etwas besser",
+      "healSome": "Besser",
+      "healMuch": "Viel besser",
+      "healFull": "Wieder fit"
     }
   }
 }

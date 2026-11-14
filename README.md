@@ -10,10 +10,11 @@
 
 ## Highlights
 
-* **One glance, no sheet:** health, armor, speed, conditions and more appear next to the token after a short pause.
+* **One glance, no sheet:** health, armor, speed, conditions and more appear next to the token.
 * **Words instead of numbers:** players see that the ogre is *bloodied* or *near death* without learning its hit points.
 * **You decide who sees what:** every value has its own audience, from GM only to everyone, and its own form for friends, neutrals, foes and secret tokens.
 * **A column for the party:** choose how players see each other's heroes, for example how hurt a friend is without the exact hit points. Friendly NPCs keep their own setting.
+* **Floating numbers, per audience:** damage and healing float up from the token, exact for friends, described for foes ("a scratch", "badly hurt"), and on request in place of the system's own numbers.
 * **Observers see like owners:** a player who may observe a character sees its tooltip just like its owner.
 * **Ready for your system:** presets for D&D 5e, Pathfinder 2e, Savage Worlds and Crucible. Any other system shows the token bars and conditions right away.
 * **More when you need it:** values often needed in play, such as passive Insight, the spell save DC or hero points, wait in the list for a tick.

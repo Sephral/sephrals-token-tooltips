@@ -22,7 +22,9 @@ export const SETTINGS = {
     right: "STT.SETTINGS.position.right", above: "STT.SETTINGS.position.above", below: "STT.SETTINGS.position.below"}},
   size: {type: String, default: "normal", scope: "client", onChange: "redraw", choices: {
     small: "STT.SETTINGS.size.small", normal: "STT.SETTINGS.size.normal", large: "STT.SETTINGS.size.large"}},
-  respectNames: {type: Boolean, default: true, onChange: "redraw"}
+  respectNames: {type: Boolean, default: true, onChange: "redraw"},
+  floaters: {type: String, default: "missing", choices: {
+    replace: "STT.SETTINGS.floaters.replace", missing: "STT.SETTINGS.floaters.missing", off: "STT.SETTINGS.floaters.off"}}
 };
 
 /**
