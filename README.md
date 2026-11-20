@@ -20,7 +20,7 @@
 * **More when you need it:** values often needed in play, such as passive Insight, the spell save DC or hero points, wait in the list for a tick.
 * **Your own values with a click:** pick from the common values of your system or from every value of a token, see its current value and add it.
 * **Live preview:** see a token as the GM, as its owner, as another player and as a party member before you save.
-* **Distance, tracker, sharing:** distance, height and cover on request, tooltips in the combat tracker, export and import of your fields.
+* **Distance, tracker, sharing:** distance, height and cover on request, tooltips in the combat tracker, export and import of your fields with a preview of what changes, or start from a ready preset.
 * **All tooltips at once:** hold Alt and every visible token shows its tooltip.
 * **Safe by design:** hidden tokens stay hidden, and names follow each token's own name display.
 
