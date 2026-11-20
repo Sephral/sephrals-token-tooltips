@@ -39,6 +39,20 @@
         "normal": "Normal",
         "large": "Groß"
       },
+      "showAllMode": {
+        "name": "Alle Tooltips zeigen",
+        "hint": "Was die Taste für alle Tooltips macht. Halten: die Tooltips sind da, solange du die Taste hältst. Einmal drücken: der erste Druck schaltet sie ein, der nächste aus. Die Taste änderst du in den Tasteneinstellungen von Foundry.",
+        "hold": "Taste halten",
+        "toggle": "Einmal drücken, nochmal zum Ausschalten"
+      },
+      "turnTooltips": {
+        "name": "Tooltips zu Beginn eines Zugs (SL)",
+        "hint": "Zu Beginn jedes Kampfzugs siehst du ein paar Sekunden lang die Tooltips aller sichtbaren Token, als hieltest du die Taste. Es gelten die Feldeinstellungen wie beim Darüberfahren. Nur auf diesem Gerät."
+      },
+      "turnSeconds": {
+        "name": "Sekunden für die Zug-Tooltips",
+        "hint": "Wie lange die Tooltips zu Beginn eines Zugs stehen bleiben."
+      },
       "respectNames": {
         "name": "Namensanzeige jedes Tokens beachten",
         "hint": "Spieler sehen den Namen eines Tokens im Tooltip nur, wenn der Token seinen Namen allen beim Überfahren oder immer zeigt. Aus: Der Name folgt nur den Feldeinstellungen."
@@ -53,7 +67,8 @@
     },
     "Keys": {
       "showAll": "Alle Tooltips zeigen",
-      "showAllHint": "Solange die Taste gedrückt ist, zeigt jeder sichtbare Token seinen Tooltip."
+      "showAllHint": "Halte die Taste gedrückt, um die Tooltips aller sichtbaren Token zu zeigen, oder drücke sie einmal zum Einschalten und noch einmal zum Ausschalten, siehe die Einstellung Alle Tooltips zeigen.",
+      "indicator": "Alle Tooltips sind an. Drücke die Taste noch einmal, um sie auszuschalten."
     },
     "Fields": {
       "title": "Felder der Tooltips",

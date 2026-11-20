@@ -5,7 +5,7 @@ import {registerHubModule} from "./hub.mjs";
 import {openFields, refreshPreview} from "./fields-app.mjs";
 import {registerFloaters} from "./floaters.mjs";
 import {applyModuleLanguage} from "./language.mjs";
-import {clear, concerns, hideAll, onDestroyToken, onHoverToken, onRefreshToken, refresh, reposition, showAll,
+import {clear, concerns, onCombatTurn, onDestroyToken, onHoverToken, onKey, onRefreshToken, refresh, reposition,
   watchPointer} from "./overlay.mjs";
 import {currentFields, registerField, registeredFields} from "./registry.mjs";
 import {noticeNewVersions, runSelfTest} from "./selftest.mjs";
@@ -25,19 +25,19 @@ Hooks.once("init", () => {
   });
   // Counted only on the active GM's client, like every Sephral module
   registerUsage(MODULE_ID, {
-    features: ["tooltipSession", "showAllHeld", "fieldsSaved", "customField", "floaterShown", "floaterRules"],
-    settings: ["theme", "enabled", "position", "size", "respectNames", "floaters"]
+    features: ["tooltipSession", "showAllHeld", "showAllToggled", "turnTooltips", "fieldsSaved", "customField", "floaterShown", "floaterRules"],
+    settings: ["theme", "enabled", "position", "size", "respectNames", "floaters", "showAllMode", "turnTooltips"]
   });
   game.keybindings.register(MODULE_ID, "showAll", {
     name: "STT.Keys.showAll",
     hint: "STT.Keys.showAllHint",
     editable: [{key: "AltLeft"}, {key: "AltRight"}],
     onDown: () => {
-      showAll();
+      onKey("down");
       return false;
     },
     onUp: () => {
-      hideAll();
+      onKey("up");
       return false;
     },
     precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
@@ -49,6 +49,7 @@ Hooks.once("init", () => {
   Hooks.on("destroyToken", onDestroyToken);
   Hooks.on("canvasPan", reposition);
   Hooks.on("canvasTearDown", clear);
+  Hooks.on("updateCombat", onCombatTurn);
   Hooks.on("renderTokenHUD", clear);
   Hooks.on("controlToken", refreshPreview);
   Hooks.on("updateActor", actor => changed(actor));

@@ -39,6 +39,20 @@
         "normal": "Normal",
         "large": "Large"
       },
+      "showAllMode": {
+        "name": "Show all tooltips",
+        "hint": "What the key for all tooltips does. Hold: the tooltips show while the key is held. Press once: the first press switches them on, the next press off. You can change the key in Foundry's key settings.",
+        "hold": "Hold the key",
+        "toggle": "Press once, press again to switch off"
+      },
+      "turnTooltips": {
+        "name": "Tooltips at the start of a turn (GM)",
+        "hint": "At the start of each combat turn you see the tooltips of all visible tokens for a few seconds, as if you held the key. The field settings apply as for hovering. Only on this device."
+      },
+      "turnSeconds": {
+        "name": "Seconds for the turn tooltips",
+        "hint": "How long the tooltips stay at the start of a turn."
+      },
       "respectNames": {
         "name": "Follow the name display of each token",
         "hint": "Players only see a token's name in the tooltip when the token shows its name to everyone on hover or always. Off: the name follows the field settings alone."
@@ -53,7 +67,8 @@
     },
     "Keys": {
       "showAll": "Show all tooltips",
-      "showAllHint": "While the key is held, every visible token shows its tooltip."
+      "showAllHint": "Hold the key to show every visible token's tooltip, or press it once to switch them on and again to switch them off, see the setting Show all tooltips.",
+      "indicator": "All tooltips are on. Press the key again to switch them off."
     },
     "Fields": {
       "title": "Tooltip fields",

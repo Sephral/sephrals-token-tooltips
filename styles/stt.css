@@ -82,6 +82,22 @@
   animation: stt-in 0.12s ease-out;
 }
 
+/* The note while the toggled key keeps all tooltips on */
+#stt-layer .stt-indicator {
+  position: fixed;
+  left: 50%;
+  top: 12px;
+  transform: translateX(-50%);
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgb(28 26 24 / 0.82);
+  color: #ece5d8;
+  font-family: var(--font-body, "Signika", sans-serif);
+  font-size: 12px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
 #stt-layer .stt-tooltip[hidden],
 #stt-layer .stt-tooltip.stt-offscreen {
   display: none;

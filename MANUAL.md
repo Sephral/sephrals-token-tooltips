@@ -110,9 +110,11 @@ Foundry's own client setting *Scrolling Status Text* (core settings) turns every
 
 | Key | Does |
 | --- | --- |
-| Alt (hold) | Shows the tooltips of all visible tokens, a little smaller, until the key is released |
+| Alt (hold) | Shows the tooltips of all visible tokens, a little smaller, until the key is released. With the setting *Show all tooltips* on *Press once* the first press switches them on and the next press off, and a small note at the top of the screen says so. |
 
-The key can be changed in Foundry's key settings (*Show all tooltips*).
+The key can be changed in Foundry's key settings (*Show all tooltips*). Switching the scene, opening the token HUD or changing a tooltip setting switches a toggled key off again.
+
+**Tooltips at the start of a turn (GM):** with the setting *Tooltips at the start of a turn* on (default off, this device only), the GM sees the tooltips of all visible tokens for 4 seconds (setting *Seconds for the turn tooltips*, 1 to 15) whenever the turn or round of the active combat of the viewed scene changes, also when combat starts. A held or toggled key keeps them on after that. The field audiences and forms apply exactly as for hovering, so what a player sees never changes, and players never get these tooltips.
 
 ## Settings
 
@@ -126,6 +128,9 @@ All options are in *Game Settings → Configure Settings → Sephral’s Token T
 | Delay | How long the pointer rests before the tooltip appears, 0 to 1500 milliseconds (default 350), for you |
 | Position | Right of, above or below the token. The tooltip moves to the other side when there is no room, for you |
 | Size | Small, normal or large text, for you |
+| Show all tooltips | The key for all tooltips: hold (default) or press once to switch on and again to switch off, for you |
+| Tooltips at the start of a turn (GM) | All tooltips for a few seconds at each combat turn, off by default, for you |
+| Seconds for the turn tooltips | 1 to 15, default 4, for you |
 | Follow the name display of each token | Names only when the token shows its name to everyone (default on) |
 | Floating numbers | Replace the system's numbers, only where the system shows none (default), or off, for the world (GM) |
 | Configure fields | Opens the field window (GM) |
@@ -139,8 +144,8 @@ The module can take part in a small usage report shared by all of Sephral’s mo
 With the GM’s consent only the active GM’s browser counts, and it sends at most one report a day. The counts are kept in a hidden world setting, so all browsers and computers of the GM count together, and turning the statistics off deletes them. A copy of a world gets its own world ID. The question lists everything the report contains, from the Foundry version to a random world ID. For Token Tooltips it holds:
 
 * on how many of the last 30 days the module was used
-* whether the GM saw a tooltip and held the key for all tooltips (once per session each), how often the GM saved the fields and added an own field, how many floating numbers the GM's screen showed or ruled on
-* the settings *Look*, *Show tooltips*, *Position*, *Size*, *Follow the name display of each token* and *Floating numbers* (only the chosen option)
+* whether the GM saw a tooltip, held or toggled the key for all tooltips and saw the tooltips at a turn start (once per session each), how often the GM saved the fields and added an own field, how many floating numbers the GM's screen showed or ruled on
+* the settings *Look*, *Show tooltips*, *Position*, *Size*, *Show all tooltips*, *Tooltips at the start of a turn*, *Follow the name display of each token* and *Floating numbers* (only the chosen option)
 * where errors occur in the module code: file, line, error type and whether the error arose in the module itself, in Foundry, in the game system or in another module, never the error message or the name of another module
 
 No names, values, data paths or other content of the world are sent, and nothing the players do is counted.

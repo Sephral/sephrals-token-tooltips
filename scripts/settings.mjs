@@ -22,6 +22,10 @@ export const SETTINGS = {
     right: "STT.SETTINGS.position.right", above: "STT.SETTINGS.position.above", below: "STT.SETTINGS.position.below"}},
   size: {type: String, default: "normal", scope: "client", onChange: "redraw", choices: {
     small: "STT.SETTINGS.size.small", normal: "STT.SETTINGS.size.normal", large: "STT.SETTINGS.size.large"}},
+  showAllMode: {type: String, default: "hold", scope: "client", onChange: "redraw", choices: {
+    hold: "STT.SETTINGS.showAllMode.hold", toggle: "STT.SETTINGS.showAllMode.toggle"}},
+  turnTooltips: {type: Boolean, default: false, scope: "client", onChange: "redraw"},
+  turnSeconds: {type: Number, default: 4, scope: "client", range: {min: 1, max: 15, step: 1}},
   respectNames: {type: Boolean, default: true, onChange: "redraw"},
   floaters: {type: String, default: "missing", choices: {
     replace: "STT.SETTINGS.floaters.replace", missing: "STT.SETTINGS.floaters.missing", off: "STT.SETTINGS.floaters.off"}}

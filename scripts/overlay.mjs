@@ -7,6 +7,7 @@
 import {MODULE_ID, setting} from "./config.mjs";
 import {tooltipData, tooltipMarkup} from "./content.mjs";
 import {onScreen, placeTooltip} from "./placement.mjs";
+import {applyKey, featureOf, idleState, isTurnChange, turnDuration, wantsAll} from "./showall.mjs";
 import {currentFields} from "./registry.mjs";
 import {countFeature} from "./usage.mjs";
 
@@ -23,7 +24,14 @@ const all = new Map();
 let pressed = false;
 
 /** Counted once per session (usage statistics). */
-const counted = {shown: false, all: false};
+const counted = {shown: false, showAllHeld: false, showAllToggled: false, turnTooltips: false};
+
+/** The sources that switch all tooltips on, see showall.mjs. */
+let state = idleState();
+
+/** The timer of the turn tooltips, and the small note shown while the toggled key keeps all tooltips on. */
+let turnTimer = null;
+let indicator = null;
 
 /** Redraws waiting for the next frame. */
 let frame = null;
@@ -235,10 +243,68 @@ export function showAll() {
   }
   for ( const [element] of added ) sizeOf(element);
   for ( const [element, token] of added ) position(element, token);
-  if ( all.size && !counted.all ) {
-    counted.all = true;
-    countFeature(MODULE_ID, "showAllHeld");
+  const feature = featureOf(state);
+  if ( all.size && feature && !counted[feature] ) {
+    counted[feature] = true;
+    countFeature(MODULE_ID, feature);
   }
+}
+
+/**
+ * Show or hide all tooltips to match the sources that want them, and the note of the toggled key.
+ */
+function sync() {
+  if ( wantsAll(state) ) showAll();
+  else hideAll();
+  updateIndicator();
+}
+
+/**
+ * The small note at the bottom of the screen while the toggled key keeps all tooltips on.
+ */
+function updateIndicator() {
+  if ( !state.toggled ) {
+    indicator?.remove();
+    indicator = null;
+    return;
+  }
+  if ( indicator?.isConnected ) return;
+  indicator = document.createElement("div");
+  indicator.className = "stt-indicator";
+  indicator.setAttribute("role", "status");
+  indicator.textContent = game.i18n.localize("STT.Keys.indicator");
+  ensureLayer().append(indicator);
+}
+
+/**
+ * The "show all" key was pressed or released.
+ * @param {"down"|"up"} phase
+ */
+export function onKey(phase) {
+  state = applyKey(state, setting("showAllMode"), phase);
+  sync();
+}
+
+/**
+ * Hook "updateCombat": at the start of a turn the GM sees all tooltips for a few seconds.
+ * @param {Combat} combat
+ * @param {object} changes
+ */
+export function onCombatTurn(combat, changes) {
+  if ( !game.user.isGM || !setting("turnTooltips") || !setting("enabled") || !isTurnChange(changes) ) return;
+  if ( !combat.started || !combat.active || !canvas?.ready ) return;
+  if ( combat.scene && (combat.scene.id !== canvas.scene?.id) ) return;
+  clearTimeout(turnTimer);
+  // The tokens of the new turn are redrawn first
+  turnTimer = setTimeout(() => {
+    state = {...state, turn: true};
+    sync();
+    turnTimer = setTimeout(() => {
+      turnTimer = null;
+      state = {...state, turn: false};
+      sync();
+    }, turnDuration(setting("turnSeconds")));
+  }, 150);
 }
 
 /**
@@ -367,7 +433,9 @@ export function watchPointer() {
   window.addEventListener("blur", () => {
     pressed = false;
     hide();
-    hideAll();
+    // A held key is lost with the focus, a toggled key and the turn tooltips stay
+    state = {...state, held: false};
+    if ( !wantsAll(state) ) hideAll();
   });
 }
 
@@ -375,6 +443,10 @@ export function watchPointer() {
  * Clear everything (the canvas is torn down, the module was switched off).
  */
 export function clear() {
+  clearTimeout(turnTimer);
+  turnTimer = null;
+  state = idleState();
+  updateIndicator();
   hide();
   hideAll();
 }
