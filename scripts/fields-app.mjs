@@ -569,7 +569,8 @@ export class FieldConfig extends HandlebarsApplicationMixin(ApplicationV2) {
     const plans = Object.fromEntries(MODES.map(mode => [mode, planImport({systemId: game.system.id, presetId: preset.id,
       current: this.#fields, imported: parsed, mode, registered: registeredFields()})]));
     const mode = await FieldConfig.#askImport(plans, parsed, preset.id);
-    if ( !mode ) return;
+    // Cancel or the close button give no mode, or the name of the button instead of a known mode
+    if ( !mode || !plans[mode] ) return;
     this.#fields = plans[mode].fields;
     countFeature(MODULE_ID, "fieldsImported");
     ui.notifications.info(t("STT.Transfer.imported"));
