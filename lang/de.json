@@ -347,9 +347,8 @@
       "exported": "Die Felder sind als Datei gespeichert.",
       "imported": "Felder übernommen. Gespeichert wird erst mit Speichern.",
       "title": "Felder importieren",
-      "intro": "Diese Änderungen würden an der Feldliste gemacht. Gespeichert wird erst mit Speichern.",
       "merge": "Zusammenführen",
-      "mergeHint": "Felder, die in der Datei fehlen, bleiben, wie sie sind.",
+      "mergeHint": "Felder, die nicht in der Datei stehen, bleiben, wie sie sind.",
       "replace": "Ersetzen",
       "replaceHint": "Die Datei bestimmt alles. Andere Felder gehen auf ihre Vorgaben zurück, eigene Felder, die nicht in der Datei stehen, entfallen.",
       "apply": "Übernehmen",
@@ -366,7 +365,16 @@
         "module": "Das ist keine Felderdatei von Token Tooltips.",
         "format": "Diese Datei stammt aus einer neueren Version. Aktualisiere zuerst das Modul.",
         "empty": "Die Datei enthält keine Felder."
-      }
+      },
+      "addedShort": "neues eigenes Feld",
+      "removedShort": "fällt weg",
+      "summaryChanged": "{count} geändert",
+      "summaryAdded": "{count} neu",
+      "summaryRemoved": "{count} fallen weg",
+      "on": "an",
+      "off": "aus",
+      "modeLabel": "Wie die Datei übernommen wird",
+      "foot": "Übernehmen trägt die Felder in dieses Fenster ein. Behalten werden sie erst mit Speichern."
     }
   }
 }

@@ -347,7 +347,6 @@
       "exported": "The fields are saved as a file.",
       "imported": "Fields taken over. Nothing is stored until you save.",
       "title": "Import fields",
-      "intro": "These changes would be made to the field list. Nothing is stored until you save.",
       "merge": "Merge",
       "mergeHint": "Fields the file does not mention stay as they are.",
       "replace": "Replace",
@@ -366,7 +365,16 @@
         "module": "This is not a field file of Token Tooltips.",
         "format": "This file comes from a newer version. Update the module first.",
         "empty": "The file holds no fields."
-      }
+      },
+      "addedShort": "new own field",
+      "removedShort": "is removed",
+      "summaryChanged": "{count} changed",
+      "summaryAdded": "{count} new",
+      "summaryRemoved": "{count} removed",
+      "on": "on",
+      "off": "off",
+      "modeLabel": "How the file is used",
+      "foot": "Apply puts the fields into this window. They are kept once you press Save."
     }
   }
 }

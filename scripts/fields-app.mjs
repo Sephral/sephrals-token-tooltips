@@ -8,7 +8,7 @@
 import {MODULE_ID, TEMPLATES, addSettingsGear, esc, fieldLabel, isShown, setting, t} from "./config.mjs";
 import {tooltipData, tooltipMarkup} from "./content.mjs";
 import {DISPLAYS, customDefinition, fieldsFor, moveField, newCustomId, sanitizeCustom, toStored} from "./fields.mjs";
-import {MODES, buildExport, exportName, parseImport, planImport} from "./transfer.mjs";
+import {MODES, buildExport, changeDetails, exportName, parseImport, planImport} from "./transfer.mjs";
 import {describable, formatValue} from "./format.mjs";
 import {entryLabel, flattenPaths, groupEntries, normalizePath, previewValue, searchEntries, shortlistFor, suggestLabel,
   takenPaths, topGroup} from "./paths.mjs";
@@ -601,16 +601,29 @@ export class FieldConfig extends HandlebarsApplicationMixin(ApplicationV2) {
     const columns = {enabled: "colShow", audience: "colAudience", display: "colLook"};
     const what = key => (key.startsWith("forms.")
       ? `${t("STT.Fields.colOthers")} (${t(`STT.Disposition.${key.slice(6)}`)})` : t(`STT.Fields.${columns[key]}`));
-    const items = plan.changes.map(change => {
-      const name = change.field ? fieldLabel(change.field) : "";
+    const value = v => (typeof v === "boolean" ? t(v ? "STT.Transfer.on" : "STT.Transfer.off") : t(`STT.Choice.${v}`));
+    const icon = change => `<i class="${esc(change.field?.icon ?? "fa-solid fa-circle")}" inert></i>`;
+    const rows = plan.changes.map(change => {
+      const name = change.field ? esc(fieldLabel(change.field)) : "";
       switch ( change.kind ) {
-        case "added": return `<li data-kind="added"><i class="fa-solid fa-plus" inert></i> ${esc(t("STT.Transfer.added", {name: name}))}</li>`;
-        case "removed": return `<li data-kind="removed"><i class="fa-solid fa-minus" inert></i> ${esc(t("STT.Transfer.removed", {name: name}))}</li>`;
-        case "changed": return `<li data-kind="changed"><i class="fa-solid fa-pen" inert></i> ${esc(name)}: ${esc(change.what.map(what).join(", "))}</li>`;
-        default: return `<li data-kind="order"><i class="fa-solid fa-arrows-up-down" inert></i> ${esc(t("STT.Transfer.order"))}</li>`;
+        case "added": return `<li data-kind="added"><span class="stt-import-name">${icon(change)}${name}</span>`
+          + `<span class="stt-import-what">${esc(t("STT.Transfer.addedShort"))}</span></li>`;
+        case "removed": return `<li data-kind="removed"><span class="stt-import-name">${icon(change)}${name}</span>`
+          + `<span class="stt-import-what">${esc(t("STT.Transfer.removedShort"))}</span></li>`;
+        case "changed": return `<li data-kind="changed"><span class="stt-import-name">${icon(change)}${name}</span>`
+          + `<span class="stt-import-what">${changeDetails(change).map(d => `<span>${esc(what(d.key))}: `
+          + (d.from === null ? "" : `<span class="stt-import-from">${esc(value(d.from))}</span> <i class="fa-solid fa-arrow-right" inert></i> `)
+          + `<strong>${d.to === null ? "" : esc(value(d.to))}</strong></span>`).join("")}</span></li>`;
+        default: return `<li data-kind="order"><span class="stt-import-name"><i class="fa-solid fa-arrows-up-down" inert></i>`
+          + `${esc(t("STT.Transfer.order"))}</span></li>`;
       }
     });
-    return items.length ? items.join("") : `<li>${esc(t("STT.Transfer.nothing"))}</li>`;
+    const count = kind => plan.changes.filter(c => c.kind === kind).length;
+    const parts = [["changed", "summaryChanged"], ["added", "summaryAdded"], ["removed", "summaryRemoved"]]
+      .filter(([kind]) => count(kind)).map(([kind, key]) => `<span data-kind="${kind}">${esc(t(`STT.Transfer.${key}`, {count: count(kind)}))}</span>`);
+    const summary = parts.length ? parts.join("") : `<span>${esc(t("STT.Transfer.nothing"))}</span>`;
+    return `<div class="stt-import-summary">${summary}</div>`
+      + (rows.length ? `<ul class="stt-import-list">${rows.join("")}</ul>` : "");
   }
 
   /**
@@ -628,15 +641,17 @@ export class FieldConfig extends HandlebarsApplicationMixin(ApplicationV2) {
     if ( plans.merge.unknown.length ) notes.push(t("STT.Transfer.unknown", {count: plans.merge.unknown.length}));
     if ( parsed.dropped ) notes.push(t("STT.Transfer.dropped", {count: parsed.dropped}));
     const content = `<div class="stt-import-body">
-      <p>${esc(t("STT.Transfer.intro"))}</p>
-      <fieldset class="stt-import-modes">
-        <label><input type="radio" name="mode" value="merge" checked> ${esc(t("STT.Transfer.merge"))}
-          <small>${esc(t("STT.Transfer.mergeHint"))}</small></label>
-        <label><input type="radio" name="mode" value="replace"> ${esc(t("STT.Transfer.replace"))}
-          <small>${esc(t("STT.Transfer.replaceHint"))}</small></label>
-      </fieldset>
-      <ul class="stt-import-list">${FieldConfig.#changesMarkup(plans.merge)}</ul>
-      ${notes.map(note => `<p class="stt-import-note">${esc(note)}</p>`).join("")}
+      <input type="hidden" name="mode" value="merge">
+      <div class="stt-import-modes" role="radiogroup" aria-label="${esc(t("STT.Transfer.modeLabel"))}">
+        <button type="button" role="radio" aria-checked="true" class="active" data-mode="merge">
+          <i class="fa-solid fa-code-merge" inert></i> ${esc(t("STT.Transfer.merge"))}</button>
+        <button type="button" role="radio" aria-checked="false" data-mode="replace">
+          <i class="fa-solid fa-right-left" inert></i> ${esc(t("STT.Transfer.replace"))}</button>
+      </div>
+      <p class="stt-import-hint" data-hint>${esc(t("STT.Transfer.mergeHint"))}</p>
+      <div class="stt-import-changes">${FieldConfig.#changesMarkup(plans.merge)}</div>
+      ${notes.map(note => `<p class="stt-import-note"><i class="fa-solid fa-circle-info" inert></i> ${esc(note)}</p>`).join("")}
+      <p class="stt-import-foot">${esc(t("STT.Transfer.foot"))}</p>
     </div>`;
     return DialogV2.wait({
       window: {title: t("STT.Transfer.title"), icon: "fa-solid fa-file-import"},
@@ -652,10 +667,19 @@ export class FieldConfig extends HandlebarsApplicationMixin(ApplicationV2) {
       render: (event, dialog) => {
         const frame = dialog.element;
         frame.dataset.sttTheme = setting("theme");
-        const list = frame.querySelector(".stt-import-list");
-        for ( const radio of frame.querySelectorAll("input[name=mode]") ) {
-          radio.addEventListener("change", () => {
-            list.innerHTML = FieldConfig.#changesMarkup(plans[radio.value]);
+        const changes = frame.querySelector(".stt-import-changes");
+        const hint = frame.querySelector("[data-hint]");
+        const field = frame.querySelector("input[name=mode]");
+        for ( const button of frame.querySelectorAll(".stt-import-modes [data-mode]") ) {
+          button.addEventListener("click", () => {
+            const mode = button.dataset.mode;
+            field.value = mode;
+            for ( const other of frame.querySelectorAll(".stt-import-modes [data-mode]") ) {
+              other.classList.toggle("active", other === button);
+              other.setAttribute("aria-checked", String(other === button));
+            }
+            hint.textContent = t(mode === "replace" ? "STT.Transfer.replaceHint" : "STT.Transfer.mergeHint");
+            changes.innerHTML = FieldConfig.#changesMarkup(plans[mode]);
           });
         }
       }

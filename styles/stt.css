@@ -61,6 +61,14 @@
   pointer-events: none;
 }
 
+/* The tracker's tooltip opens beside the sidebar and stays above the interface, like Foundry's own tooltips */
+#stt-layer-tracker {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-index-tooltip, 10000);
+  pointer-events: none;
+}
+
 .stt-tooltip {
   --stt-scale: 1;
   position: fixed;
@@ -625,52 +633,119 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding: 2px 4px;
   color: var(--stt-ink);
 }
 
+/* Merge or replace: a two part switch, the active part filled */
 .stt-import .stt-import-modes {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin: 0;
-  padding: 0;
-  border: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 3px;
+  border: 1px solid var(--stt-line);
+  border-radius: 8px;
+  background: var(--stt-soft);
 }
 
-.stt-import .stt-import-modes label {
+.stt-import .stt-import-modes button {
+  height: 32px;
+  margin: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--stt-muted);
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.stt-import .stt-import-modes button.active {
+  background: var(--stt-accent);
+  color: #fff;
+}
+
+.stt-import .stt-import-hint,
+.stt-import .stt-import-note,
+.stt-import .stt-import-foot {
+  margin: 0;
+  color: var(--stt-muted);
+  font-size: 0.9em;
+}
+
+.stt-import .stt-import-foot {
+  padding-top: 6px;
+  border-top: 1px solid var(--stt-line);
+}
+
+.stt-import .stt-import-changes {
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
   gap: 6px;
 }
 
-.stt-import .stt-import-modes small,
-.stt-import .stt-import-note {
-  color: var(--stt-muted);
+.stt-import .stt-import-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
+
+.stt-import .stt-import-summary span {
+  padding: 1px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--stt-line);
+  background: var(--stt-soft);
+  font-size: 0.88em;
+  font-weight: 600;
+}
+
+.stt-import .stt-import-summary [data-kind="added"] { color: var(--stt-good); }
+.stt-import .stt-import-summary [data-kind="removed"] { color: var(--stt-bad); }
+.stt-import .stt-import-summary [data-kind="changed"] { color: var(--stt-accent); }
 
 .stt-import .stt-import-list {
   display: flex;
   flex-direction: column;
-  gap: 3px;
   max-height: 260px;
   margin: 0;
-  padding: 8px 10px;
+  padding: 0;
   overflow-y: auto;
   border: 1px solid var(--stt-line);
   border-radius: 6px;
-  background: var(--stt-soft);
   list-style: none;
 }
 
-.stt-import .stt-import-list li[data-kind="added"] i { color: var(--stt-good); }
-.stt-import .stt-import-list li[data-kind="removed"] i { color: var(--stt-bad); }
-.stt-import .stt-import-list li[data-kind="changed"] i,
-.stt-import .stt-import-list li[data-kind="order"] i { color: var(--stt-accent); }
+.stt-import .stt-import-list li {
+  display: grid;
+  grid-template-columns: minmax(110px, 38%) 1fr;
+  gap: 10px;
+  align-items: baseline;
+  padding: 6px 10px;
+}
 
-.stt-import .stt-import-list i {
+.stt-import .stt-import-list li + li { border-top: 1px solid var(--stt-line); }
+
+.stt-import .stt-import-name {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-weight: 600;
+}
+
+.stt-import .stt-import-name i {
   width: 16px;
   text-align: center;
+  color: var(--stt-muted);
 }
+
+.stt-import .stt-import-what {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stt-import .stt-import-what i { font-size: 0.8em; color: var(--stt-muted); }
+.stt-import .stt-import-from { color: var(--stt-muted); text-decoration: line-through; }
+.stt-import li[data-kind="added"] .stt-import-what { color: var(--stt-good); }
+.stt-import li[data-kind="removed"] .stt-import-what { color: var(--stt-bad); }
 
 /* -------------------------------------------- */
 /*  Picker of data paths                        */

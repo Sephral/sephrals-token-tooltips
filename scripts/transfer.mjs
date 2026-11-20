@@ -128,13 +128,28 @@ export function diffFields(before, after) {
       continue;
     }
     const what = configChanges(old, field);
-    if ( what.length ) changes.push({kind: "changed", id: field.id, field, what});
+    if ( what.length ) changes.push({kind: "changed", id: field.id, field, before: old, what});
   }
   for ( const field of before ) if ( !now.has(field.id) ) changes.push({kind: "removed", id: field.id, field});
   const orderBefore = before.map(f => f.id).filter(id => now.has(id));
   const orderAfter = after.map(f => f.id).filter(id => was.has(id));
   if ( orderBefore.join() !== orderAfter.join() ) changes.push({kind: "order"});
   return changes;
+}
+
+/**
+ * Each changed setting of a changed field with its value before and after, for the import preview.
+ * @param {{field: object, before?: object, what: string[]}} change
+ * @returns {Array<{key: string, from: string|boolean, to: string|boolean}>}
+ */
+export function changeDetails(change) {
+  if ( !change?.before || !change.field ) return (change?.what ?? []).map(key => ({key, from: null, to: null}));
+  const x = normalizeConfig(change.before.config, change.before.defaults);
+  const y = normalizeConfig(change.field.config, change.field.defaults);
+  return change.what.map(key => {
+    if ( key.startsWith("forms.") ) return {key, from: x.forms[key.slice(6)], to: y.forms[key.slice(6)]};
+    return {key, from: x[key], to: y[key]};
+  });
 }
 
 /**

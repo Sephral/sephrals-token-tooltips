@@ -76,6 +76,32 @@ function ensureLayer() {
   return layer;
 }
 
+/** The layer of the tracker's tooltip: above the interface, because it opens beside the sidebar. */
+let trackerLayer = null;
+
+function ensureTrackerLayer() {
+  if ( trackerLayer?.isConnected ) return trackerLayer;
+  trackerLayer = document.createElement("div");
+  trackerLayer.id = "stt-layer-tracker";
+  trackerLayer.setAttribute("aria-hidden", "true");
+  document.body.append(trackerLayer);
+  return trackerLayer;
+}
+
+/**
+ * Where the tracker's tooltip may open: the row's height, but beside the whole sidebar (with its tab buttons) or the
+ * popped out tracker window, so it never lies over Foundry's buttons.
+ * @param {HTMLElement} row
+ * @returns {{left: number, top: number, width: number, height: number}}
+ */
+function trackerAnchor(row) {
+  const box = row.getBoundingClientRect();
+  const host = row.closest("#sidebar, #ui-right, .application")?.getBoundingClientRect();
+  const left = host ? Math.min(box.left, host.left) : box.left;
+  const right = host ? Math.max(box.right, host.right) : box.right;
+  return {left, top: box.top, width: right - left, height: box.height};
+}
+
 /**
  * A new, empty tooltip element in the module's look.
  * @returns {HTMLElement}
@@ -574,12 +600,12 @@ function showTracker(row) {
   if ( (tracker.row !== row) || !row.isConnected || pressed || !canvas?.ready ) return;
   const token = trackerToken(row);
   if ( !token ) return;
-  tracker.element ??= createElement();
+  if ( !tracker.element ) {
+    tracker.element = createElement();
+    ensureTrackerLayer().append(tracker.element);
+  }
   tracker.tokenId = token.id;
-  const rect = () => {
-    const box = row.getBoundingClientRect();
-    return {left: box.left, top: box.top, width: box.width, height: box.height};
-  };
+  const rect = () => trackerAnchor(row);
   if ( !fill(tracker.element, token, currentFields(), {anchor: rect}) ) {
     tracker.tokenId = null;
     return;
@@ -614,10 +640,7 @@ function refreshTracker(fields) {
     return;
   }
   tracker.tokenId = token.id;
-  const rect = () => {
-    const box = row.getBoundingClientRect();
-    return {left: box.left, top: box.top, width: box.width, height: box.height};
-  };
+  const rect = () => trackerAnchor(row);
   if ( !fill(tracker.element, token, fields, {anchor: rect}) ) tracker.tokenId = null;
 }
 
