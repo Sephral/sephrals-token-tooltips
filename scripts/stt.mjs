@@ -5,8 +5,8 @@ import {registerHubModule} from "./hub.mjs";
 import {openFields, refreshPreview} from "./fields-app.mjs";
 import {registerFloaters} from "./floaters.mjs";
 import {applyModuleLanguage} from "./language.mjs";
-import {clear, concerns, onCombatTurn, onDestroyToken, onHoverToken, onKey, onRefreshToken, refresh, reposition,
-  watchPointer} from "./overlay.mjs";
+import {clear, concerns, followsOrigin, onCombatTurn, onDestroyToken, onHoverToken, onKey, onRefreshToken,
+  onRenderTracker, refresh, reposition, watchPointer} from "./overlay.mjs";
 import {currentFields, registerField, registeredFields} from "./registry.mjs";
 import {noticeNewVersions, runSelfTest} from "./selftest.mjs";
 import {changeLanguage, registerSettings} from "./settings.mjs";
@@ -25,7 +25,8 @@ Hooks.once("init", () => {
   });
   // Counted only on the active GM's client, like every Sephral module
   registerUsage(MODULE_ID, {
-    features: ["tooltipSession", "showAllHeld", "showAllToggled", "turnTooltips", "fieldsSaved", "customField", "floaterShown", "floaterRules"],
+    features: ["tooltipSession", "showAllHeld", "showAllToggled", "turnTooltips", "fieldsSaved", "customField", "floaterShown", "floaterRules", "distanceShown",
+      "trackerTooltip", "fieldsExported", "fieldsImported"],
     settings: ["theme", "enabled", "position", "size", "respectNames", "floaters", "showAllMode", "turnTooltips"]
   });
   game.keybindings.register(MODULE_ID, "showAll", {
@@ -51,9 +52,17 @@ Hooks.once("init", () => {
   Hooks.on("canvasTearDown", clear);
   Hooks.on("updateCombat", onCombatTurn);
   Hooks.on("renderTokenHUD", clear);
-  Hooks.on("controlToken", refreshPreview);
+  Hooks.on("renderCombatTracker", onRenderTracker);
+  Hooks.on("controlToken", () => {
+    refreshPreview();
+    // Distances and elevation count from the selected token
+    if ( followsOrigin() ) refresh();
+  });
   Hooks.on("updateActor", actor => changed(actor));
-  Hooks.on("updateToken", token => changed(token.actor, token.id));
+  Hooks.on("updateToken", token => {
+    changed(token.actor, token.id);
+    if ( followsOrigin() ) refresh();
+  });
   for ( const action of ["create", "update", "delete"] ) {
     Hooks.on(`${action}ActiveEffect`, effect => changed(actorOf(effect)));
     Hooks.on(`${action}Item`, item => changed(actorOf(item)));

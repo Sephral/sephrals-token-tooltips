@@ -63,6 +63,10 @@
         "replace": "Replace the system's numbers",
         "missing": "Only where the system shows none",
         "off": "Off"
+      },
+      "trackerTooltip": {
+        "name": "Tooltips in the combat tracker",
+        "hint": "Rest the pointer on a combatant in the combat tracker and its tooltip appears next to the entry, with the same field settings as on the map. Hidden combatants stay hidden for players. Only on this device."
       }
     },
     "Keys": {
@@ -130,7 +134,14 @@
       "pf2e": "Pathfinder 2e",
       "swade": "Savage Worlds",
       "crucible": "Crucible",
-      "generic": "token bars"
+      "generic": "token bars",
+      "daggerheart": "Daggerheart",
+      "CoC7": "Call of Cthulhu 7th Edition",
+      "shadowdark": "Shadowdark RPG",
+      "projectfu": "Project FU",
+      "shadowrun6-eden": "Shadowrun 6th Edition",
+      "dolmenwood": "Dolmenwood",
+      "rqg": "RuneQuest: Roleplaying in Glorantha"
     },
     "Choice": {
       "gm": "GM only",
@@ -156,7 +167,9 @@
       "list": "List",
       "modifier": "Modifier",
       "die": "Die",
-      "senses": "Senses"
+      "senses": "Senses",
+      "distance": "Distance",
+      "elevation": "Elevation"
     },
     "Disposition": {
       "party": "Party member",
@@ -206,7 +219,38 @@
       "rank": "Rank",
       "actionPoints": "Action points",
       "focus": "Focus",
-      "heroism": "Heroism"
+      "heroism": "Heroism",
+      "distance": "Distance",
+      "elevation": "Elevation",
+      "cover": "Cover",
+      "hpMarked": "Hit points marked",
+      "stress": "Stress",
+      "hope": "Hope",
+      "armor": "Armor",
+      "evasion": "Evasion",
+      "difficulty": "Difficulty",
+      "thresholds": "Damage thresholds",
+      "tier": "Tier",
+      "magicPoints": "Magic points",
+      "sanity": "Sanity",
+      "luck": "Luck",
+      "moveRate": "Movement rate",
+      "build": "Build",
+      "damageBonus": "Damage bonus",
+      "move": "Movement",
+      "luckToken": "Luck token",
+      "mindPoints": "Mind points",
+      "defense": "Defense",
+      "magicDefense": "Magic defense",
+      "fabulaPoints": "Fabula points",
+      "inventoryPoints": "Inventory points",
+      "zenit": "Zenit",
+      "initiative": "Initiative",
+      "crisis": "In crisis",
+      "physicalMonitor": "Physical monitor",
+      "stunMonitor": "Stun monitor",
+      "edge": "Edge",
+      "defenseRating": "Defense rating"
     },
     "Health": {
       "unhurt": "Unhurt",
@@ -294,6 +338,35 @@
       "healSome": "Better",
       "healMuch": "Much better",
       "healFull": "Fully healed"
+    },
+    "Transfer": {
+      "export": "Export",
+      "exportHint": "Save the fields of this system, including your own fields, as a file",
+      "import": "Import",
+      "importHint": "Load fields from an exported file. You see what changes first",
+      "exported": "The fields are saved as a file.",
+      "imported": "Fields taken over. Nothing is stored until you save.",
+      "title": "Import fields",
+      "intro": "These changes would be made to the field list. Nothing is stored until you save.",
+      "merge": "Merge",
+      "mergeHint": "Fields the file does not mention stay as they are.",
+      "replace": "Replace",
+      "replaceHint": "The file decides everything. Other fields return to their defaults and own fields that are not in the file are removed.",
+      "apply": "Take over",
+      "cancel": "Cancel",
+      "added": "New own field: {name}",
+      "removed": "Removed: {name}",
+      "order": "The order of the fields changes",
+      "nothing": "Nothing changes.",
+      "otherPreset": "The file is from the preset {preset}. Only fields that exist here are taken over.",
+      "unknown": "{count} fields of the file do not exist here and are skipped.",
+      "dropped": "{count} own fields of the file were unusable and are skipped.",
+      "error": {
+        "json": "This file cannot be read as JSON.",
+        "module": "This is not a field file of Token Tooltips.",
+        "format": "This file comes from a newer version. Update the module first.",
+        "empty": "The file holds no fields."
+      }
     }
   }
 }

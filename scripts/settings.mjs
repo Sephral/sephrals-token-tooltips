@@ -26,6 +26,7 @@ export const SETTINGS = {
     hold: "STT.SETTINGS.showAllMode.hold", toggle: "STT.SETTINGS.showAllMode.toggle"}},
   turnTooltips: {type: Boolean, default: false, scope: "client", onChange: "redraw"},
   turnSeconds: {type: Number, default: 4, scope: "client", range: {min: 1, max: 15, step: 1}},
+  trackerTooltip: {type: Boolean, default: true, scope: "client", onChange: "redraw"},
   respectNames: {type: Boolean, default: true, onChange: "redraw"},
   floaters: {type: String, default: "missing", choices: {
     replace: "STT.SETTINGS.floaters.replace", missing: "STT.SETTINGS.floaters.missing", off: "STT.SETTINGS.floaters.off"}}

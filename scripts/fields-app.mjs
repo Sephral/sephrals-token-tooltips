@@ -8,6 +8,7 @@
 import {MODULE_ID, TEMPLATES, addSettingsGear, esc, fieldLabel, isShown, setting, t} from "./config.mjs";
 import {tooltipData, tooltipMarkup} from "./content.mjs";
 import {DISPLAYS, customDefinition, fieldsFor, moveField, newCustomId, sanitizeCustom, toStored} from "./fields.mjs";
+import {MODES, buildExport, exportName, parseImport, planImport} from "./transfer.mjs";
 import {describable, formatValue} from "./format.mjs";
 import {entryLabel, flattenPaths, groupEntries, normalizePath, previewValue, searchEntries, shortlistFor, suggestLabel,
   takenPaths, topGroup} from "./paths.mjs";
@@ -38,6 +39,8 @@ export class FieldConfig extends HandlebarsApplicationMixin(ApplicationV2) {
       removeField: FieldConfig.#onRemove,
       addField: FieldConfig.#onAdd,
       resetFields: FieldConfig.#onReset,
+      exportFields: FieldConfig.#onExport,
+      importFields: FieldConfig.#onImport,
       togglePicker: FieldConfig.#onTogglePicker,
       pickerTab: FieldConfig.#onPickerTab,
       pickPath: FieldConfig.#onPickPath
@@ -539,6 +542,123 @@ export class FieldConfig extends HandlebarsApplicationMixin(ApplicationV2) {
     if ( !yes ) return;
     this.#fields = fieldsFor(game.system.id, {}, registeredFields());
     this.render();
+  }
+
+  /** @this {FieldConfig} */
+  static #onExport() {
+    this.#readForm();
+    const preset = presetFor(game.system.id);
+    const data = buildExport({presetId: preset.id, systemId: game.system.id,
+      moduleVersion: game.modules.get(MODULE_ID)?.version ?? "", fields: this.#fields});
+    foundry.utils.saveDataToFile(JSON.stringify(data, null, 2), "application/json", exportName(preset.id));
+    countFeature(MODULE_ID, "fieldsExported");
+    ui.notifications.info(t("STT.Transfer.exported"));
+  }
+
+  /** @this {FieldConfig} */
+  static async #onImport() {
+    this.#readForm();
+    const file = await FieldConfig.#chooseFile();
+    if ( !file ) return;
+    const parsed = parseImport(await file.text());
+    if ( !parsed.ok ) {
+      ui.notifications.warn(t(`STT.Transfer.error.${parsed.reason}`));
+      return;
+    }
+    const preset = presetFor(game.system.id);
+    const plans = Object.fromEntries(MODES.map(mode => [mode, planImport({systemId: game.system.id, presetId: preset.id,
+      current: this.#fields, imported: parsed, mode, registered: registeredFields()})]));
+    const mode = await FieldConfig.#askImport(plans, parsed, preset.id);
+    if ( !mode ) return;
+    this.#fields = plans[mode].fields;
+    countFeature(MODULE_ID, "fieldsImported");
+    ui.notifications.info(t("STT.Transfer.imported"));
+    this.render();
+  }
+
+  /**
+   * Let the GM pick a file.
+   * @returns {Promise<File|null>}
+   */
+  static #chooseFile() {
+    return new Promise(resolve => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".json,application/json";
+      input.addEventListener("change", () => resolve(input.files?.[0] ?? null), {once: true});
+      input.addEventListener("cancel", () => resolve(null), {once: true});
+      input.click();
+    });
+  }
+
+  /**
+   * The list of changes an import makes, as markup.
+   * @param {{fields: object[], changes: object[], unknown: string[]}} plan
+   * @returns {string}
+   */
+  static #changesMarkup(plan) {
+    const columns = {enabled: "colShow", audience: "colAudience", display: "colLook"};
+    const what = key => (key.startsWith("forms.")
+      ? `${t("STT.Fields.colOthers")} (${t(`STT.Disposition.${key.slice(6)}`)})` : t(`STT.Fields.${columns[key]}`));
+    const items = plan.changes.map(change => {
+      const name = change.field ? fieldLabel(change.field) : "";
+      switch ( change.kind ) {
+        case "added": return `<li data-kind="added"><i class="fa-solid fa-plus" inert></i> ${esc(t("STT.Transfer.added", {name: name}))}</li>`;
+        case "removed": return `<li data-kind="removed"><i class="fa-solid fa-minus" inert></i> ${esc(t("STT.Transfer.removed", {name: name}))}</li>`;
+        case "changed": return `<li data-kind="changed"><i class="fa-solid fa-pen" inert></i> ${esc(name)}: ${esc(change.what.map(what).join(", "))}</li>`;
+        default: return `<li data-kind="order"><i class="fa-solid fa-arrows-up-down" inert></i> ${esc(t("STT.Transfer.order"))}</li>`;
+      }
+    });
+    return items.length ? items.join("") : `<li>${esc(t("STT.Transfer.nothing"))}</li>`;
+  }
+
+  /**
+   * Show what an import would change, with the choice between merging and replacing.
+   * @param {object} plans    By mode
+   * @param {object} parsed   The file
+   * @param {string} presetId
+   * @returns {Promise<"merge"|"replace"|null>}
+   */
+  static #askImport(plans, parsed, presetId) {
+    const notes = [];
+    if ( parsed.preset && (parsed.preset !== presetId) ) {
+      notes.push(t("STT.Transfer.otherPreset", {preset: game.i18n.has(`STT.Preset.${parsed.preset}`) ? t(`STT.Preset.${parsed.preset}`) : parsed.preset}));
+    }
+    if ( plans.merge.unknown.length ) notes.push(t("STT.Transfer.unknown", {count: plans.merge.unknown.length}));
+    if ( parsed.dropped ) notes.push(t("STT.Transfer.dropped", {count: parsed.dropped}));
+    const content = `<div class="stt-import-body">
+      <p>${esc(t("STT.Transfer.intro"))}</p>
+      <fieldset class="stt-import-modes">
+        <label><input type="radio" name="mode" value="merge" checked> ${esc(t("STT.Transfer.merge"))}
+          <small>${esc(t("STT.Transfer.mergeHint"))}</small></label>
+        <label><input type="radio" name="mode" value="replace"> ${esc(t("STT.Transfer.replace"))}
+          <small>${esc(t("STT.Transfer.replaceHint"))}</small></label>
+      </fieldset>
+      <ul class="stt-import-list">${FieldConfig.#changesMarkup(plans.merge)}</ul>
+      ${notes.map(note => `<p class="stt-import-note">${esc(note)}</p>`).join("")}
+    </div>`;
+    return DialogV2.wait({
+      window: {title: t("STT.Transfer.title"), icon: "fa-solid fa-file-import"},
+      classes: ["stt-app", "stt-import"],
+      position: {width: 520},
+      content,
+      rejectClose: false,
+      buttons: [
+        {action: "apply", label: t("STT.Transfer.apply"), icon: "fa-solid fa-check", default: true,
+          callback: (event, button) => button.form.elements.mode.value},
+        {action: "cancel", label: t("STT.Transfer.cancel"), icon: "fa-solid fa-xmark", callback: () => null}
+      ],
+      render: (event, dialog) => {
+        const frame = dialog.element;
+        frame.dataset.sttTheme = setting("theme");
+        const list = frame.querySelector(".stt-import-list");
+        for ( const radio of frame.querySelectorAll("input[name=mode]") ) {
+          radio.addEventListener("change", () => {
+            list.innerHTML = FieldConfig.#changesMarkup(plans[radio.value]);
+          });
+        }
+      }
+    });
   }
 
   /** @this {FieldConfig} */

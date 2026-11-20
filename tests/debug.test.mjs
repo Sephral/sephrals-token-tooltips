@@ -45,7 +45,7 @@ test("the state names the preset, the configured fields and registered ones, no 
   assert.equal(state.fields.find(f => f.id === "custom-mana01").path, "system.mana");
   assert.ok(state.fields.some(f => (f.id === "aura") && f.external));
   assert.deepEqual(state.registered, [{id: "aura", type: "text", systems: ["dnd5e"]}]);
-  assert.deepEqual(Object.keys(state.overlay), ["hovered", "shownAll", "pressed", "layer"]);
+  assert.deepEqual(Object.keys(state.overlay), ["hovered", "shownAll", "pressed", "layer", "tracker"]);
 });
 
 test("registered fields need a clean, unused id and something to read", () => {

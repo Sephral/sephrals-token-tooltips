@@ -165,6 +165,30 @@ export function formatDie(value) {
 }
 
 /**
+ * A distance with its unit: 35 ft.
+ * @param {{value: *, units?: string}} data
+ * @returns {object|null}
+ */
+export function formatDistance(data) {
+  const value = toNumber(data?.value);
+  if ( value === null ) return null;
+  return {kind: "text", text: [value, data.units].filter(v => (v !== undefined) && (v !== null) && (v !== "")).join(" ")};
+}
+
+/**
+ * An elevation with its unit and, in brackets, the difference to the viewer's token: 10 ft (+5).
+ * @param {{value: *, units?: string, diff?: *}} data
+ * @returns {object|null}
+ */
+export function formatElevation(data) {
+  const value = toNumber(data?.value);
+  if ( value === null ) return null;
+  const diff = toNumber(data.diff);
+  const base = [value, data.units].filter(v => (v !== undefined) && (v !== null) && (v !== "")).join(" ");
+  return {kind: "text", text: diff ? `${base} (${formatModifier(diff)})` : base};
+}
+
+/**
  * A list of words (custom list fields).
  * @param {*} value   Array, Set or a single value
  * @returns {object|null}
@@ -208,6 +232,8 @@ export function formatValue(field, value, form, t) {
       return text === null ? null : {kind: "text", text};
     }
     case "list": return formatList(value);
+    case "distance": return formatDistance(value);
+    case "elevation": return formatElevation(value);
     case "number": {
       // Crucible keeps an immunity as an infinite resistance
       if ( Math.abs(value) === Infinity ) return {kind: "text", text: value > 0 ? "∞" : "-∞"};

@@ -24,7 +24,23 @@ const all = new Map();
 let pressed = false;
 
 /** Counted once per session (usage statistics). */
-const counted = {shown: false, showAllHeld: false, showAllToggled: false, turnTooltips: false};
+const counted = {shown: false, showAllHeld: false, showAllToggled: false, turnTooltips: false, distance: false,
+  tracker: false};
+
+/** The fields that read from the user's own token: their tooltips follow the selection and the moves of that token. */
+let originUsed = false;
+
+/** Where the token the distances count from was when the tooltips were last redrawn for it. */
+let lastOrigin = "";
+
+/** The ids of the fields that count for "distanceShown". */
+const DISTANCE_FIELDS = ["tokenDistance", "tokenElevation", "tokenCover"];
+
+/** The tooltip of a combatant in the combat tracker: the row the pointer is on and its tooltip. */
+const tracker = {row: null, app: null, tokenId: null, element: null, timer: null};
+
+/** The tracker elements that already listen, and the tracker each belongs to. */
+const trackerRoots = new WeakMap();
 
 /** The sources that switch all tooltips on, see showall.mjs. */
 let state = idleState();
@@ -113,11 +129,16 @@ export function screenRect(token) {
  * @param {boolean} [options.place=true]   Put it next to the token now (false: the caller places many at once)
  * @returns {boolean}
  */
-function fill(element, token, fields, {place=true}={}) {
+function fill(element, token, fields, {place=true, anchor=null}={}) {
   const data = tooltipData(token, {fields});
   if ( !data ) {
     element.hidden = true;
     return false;
+  }
+  originUsed = fields.some(f => f.config.enabled && f.needsOrigin);
+  if ( !counted.distance && data.rows.some(row => DISTANCE_FIELDS.includes(row.id)) ) {
+    counted.distance = true;
+    countFeature(MODULE_ID, "distanceShown");
   }
   element.dataset.sttTheme = setting("theme");
   element.dataset.size = setting("size");
@@ -125,7 +146,7 @@ function fill(element, token, fields, {place=true}={}) {
   element.innerHTML = tooltipMarkup(data);
   element.hidden = false;
   sizes.delete(element);
-  if ( place ) position(element, token);
+  if ( place ) position(element, token, anchor);
   return true;
 }
 
@@ -148,8 +169,8 @@ function sizeOf(element) {
  * @param {HTMLElement} element
  * @param {Token} token
  */
-function position(element, token) {
-  const rect = screenRect(token);
+function position(element, token, anchor=null) {
+  const rect = anchor ? anchor() : screenRect(token);
   const viewport = {width: window.innerWidth, height: window.innerHeight};
   const offscreen = !onScreen(rect, viewport);
   element.classList.toggle("stt-offscreen", offscreen);
@@ -187,6 +208,8 @@ export function onHoverToken(token, isHovered) {
 function show(tokenId) {
   const token = tokenOf(tokenId);
   if ( !token?.hover || pressed || hudOpenFor(token) || all.has(tokenId) ) return;
+  // Core highlights the token of a hovered combatant: the tooltip then sits next to the row (see below)
+  if ( tracker.row && setting("trackerTooltip") ) return;
   hovered.element ??= createElement();
   hovered.tokenId = tokenId;
   if ( !fill(hovered.element, token, currentFields()) ) {
@@ -350,6 +373,7 @@ export function refresh() {
       if ( !token?.hover ) hide();
       else if ( !fill(hovered.element, token, fields) ) hovered.tokenId = null;
     }
+    refreshTracker(fields);
     const changed = [];
     for ( const [id, element] of all ) {
       const other = tokenOf(id);
@@ -371,7 +395,7 @@ export function refresh() {
  * @returns {boolean}
  */
 export function concerns(actor, tokenId) {
-  const ids = [hovered.tokenId, ...all.keys()].filter(Boolean);
+  const ids = [hovered.tokenId, tracker.tokenId, ...all.keys()].filter(Boolean);
   if ( tokenId && ids.includes(tokenId) ) return true;
   if ( !actor ) return false;
   return ids.some(id => {
@@ -385,6 +409,7 @@ export function concerns(actor, tokenId) {
  * @param {Token} token
  */
 export function onRefreshToken(token) {
+  followOrigin(token);
   const isHovered = (token.id === hovered.tokenId) && hovered.element && !hovered.element.hidden;
   const compact = all.get(token.id);
   if ( !isHovered && !compact ) return;
@@ -400,6 +425,19 @@ export function onRefreshToken(token) {
   // Only this token's tooltips: holding Alt also makes Foundry highlight (and refresh) every token at once
   else if ( isHovered ) position(hovered.element, token);
   if ( compact ) position(compact, token);
+}
+
+/**
+ * The token distances count from moved (it animates for a while, its document follows): redraw the tooltips that
+ * read from it, once per new position.
+ * @param {Token} token
+ */
+function followOrigin(token) {
+  if ( !originUsed || !token.controlled || !(hovered.tokenId || tracker.tokenId || all.size) ) return;
+  const key = `${token.id}:${token.document.x}:${token.document.y}:${token.document.elevation}`;
+  if ( key === lastOrigin ) return;
+  lastOrigin = key;
+  refresh();
 }
 
 /**
@@ -443,6 +481,7 @@ export function watchPointer() {
  * Clear everything (the canvas is torn down, the module was switched off).
  */
 export function clear() {
+  hideTracker();
   clearTimeout(turnTimer);
   turnTimer = null;
   state = idleState();
@@ -456,5 +495,136 @@ export function clear() {
  * @returns {object}
  */
 export function overlayState() {
-  return {hovered: hovered.tokenId, shownAll: all.size, pressed, layer: !!layer?.isConnected};
+  return {hovered: hovered.tokenId, shownAll: all.size, pressed, layer: !!layer?.isConnected,
+    tracker: {listening: !!tracker.app, tooltip: tracker.tokenId}};
+}
+
+/* -------------------------------------------- */
+/*  The combat tracker                          */
+/* -------------------------------------------- */
+
+/**
+ * Hook "renderCombatTracker": the entries of the tracker show the tooltip of their token. The tracker element stays
+ * across redraws, so it gets its listeners once. A tracker without these elements (a replacement of the core tracker)
+ * simply never fires them.
+ * @param {Application} app
+ * @param {HTMLElement} html
+ */
+export function onRenderTracker(app, html) {
+  try {
+    const root = html instanceof HTMLElement ? html : (html?.[0] instanceof HTMLElement ? html[0] : app?.element);
+    if ( !(root instanceof HTMLElement) ) return;
+    trackerRoots.set(root, app);
+    if ( root.dataset.sttTracker ) return;
+    root.dataset.sttTracker = "1";
+    root.addEventListener("pointerover", event => onTrackerOver(event, root), {passive: true});
+    root.addEventListener("pointerout", event => onTrackerOut(event), {passive: true});
+    // The entry under the pointer is gone after a redraw
+    if ( tracker.row && !tracker.row.isConnected ) hideTracker();
+  } catch(err) {
+    console.warn(`${MODULE_ID} | The combat tracker could not get tooltips`, err);
+  }
+}
+
+/**
+ * The pointer moved onto an element of the tracker.
+ * @param {PointerEvent} event
+ * @param {HTMLElement} root
+ */
+function onTrackerOver(event, root) {
+  const row = event.target?.closest?.(".combatant[data-combatant-id]");
+  if ( !row || (row === tracker.row) ) return;
+  hideTracker();
+  tracker.row = row;
+  tracker.app = trackerRoots.get(root) ?? null;
+  if ( !setting("trackerTooltip") || !setting("enabled") || pressed ) return;
+  tracker.timer = setTimeout(() => showTracker(row), Math.max(0, Number(setting("delay")) || 0));
+}
+
+/**
+ * The pointer left an element of the tracker.
+ * @param {PointerEvent} event
+ */
+function onTrackerOut(event) {
+  const row = tracker.row;
+  if ( !row ) return;
+  const to = event.relatedTarget;
+  if ( (to instanceof Element) && row.contains(to) ) return;
+  hideTracker();
+}
+
+/**
+ * The token of a combatant row, when it is drawn on the viewed scene.
+ * @param {HTMLElement} row
+ * @returns {Token|null}
+ */
+function trackerToken(row) {
+  const combat = tracker.app?.viewed ?? game.combat;
+  const combatant = combat?.combatants?.get(row.dataset.combatantId);
+  if ( !combatant || (combatant.hidden && !game.user.isGM) ) return null;
+  return combatant.token?.object ?? null;
+}
+
+/**
+ * Show the tooltip of the combatant the pointer rests on, next to its row.
+ * @param {HTMLElement} row
+ */
+function showTracker(row) {
+  tracker.timer = null;
+  if ( (tracker.row !== row) || !row.isConnected || pressed || !canvas?.ready ) return;
+  const token = trackerToken(row);
+  if ( !token ) return;
+  tracker.element ??= createElement();
+  tracker.tokenId = token.id;
+  const rect = () => {
+    const box = row.getBoundingClientRect();
+    return {left: box.left, top: box.top, width: box.width, height: box.height};
+  };
+  if ( !fill(tracker.element, token, currentFields(), {anchor: rect}) ) {
+    tracker.tokenId = null;
+    return;
+  }
+  if ( !counted.tracker ) {
+    counted.tracker = true;
+    countFeature(MODULE_ID, "trackerTooltip");
+  }
+}
+
+/**
+ * Hide the tooltip of the tracker and forget the row.
+ */
+function hideTracker() {
+  clearTimeout(tracker.timer);
+  tracker.timer = null;
+  tracker.row = null;
+  tracker.tokenId = null;
+  if ( tracker.element ) tracker.element.hidden = true;
+}
+
+/**
+ * Redraw the tracker's tooltip (a value changed).
+ * @param {object[]} fields
+ */
+function refreshTracker(fields) {
+  if ( !tracker.element || tracker.element.hidden ) return;
+  const row = tracker.row;
+  const token = row?.isConnected ? trackerToken(row) : null;
+  if ( !token ) {
+    hideTracker();
+    return;
+  }
+  tracker.tokenId = token.id;
+  const rect = () => {
+    const box = row.getBoundingClientRect();
+    return {left: box.left, top: box.top, width: box.width, height: box.height};
+  };
+  if ( !fill(tracker.element, token, fields, {anchor: rect}) ) tracker.tokenId = null;
+}
+
+/**
+ * Whether the tooltips on the screen read from the user's own token (distance, elevation).
+ * @returns {boolean}
+ */
+export function followsOrigin() {
+  return originUsed && !!(hovered.tokenId || tracker.tokenId || all.size);
 }

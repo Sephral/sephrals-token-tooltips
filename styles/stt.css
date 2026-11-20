@@ -549,6 +549,12 @@
   border-color: var(--stt-accent);
 }
 
+.stt-foot-transfer {
+  display: flex;
+  gap: 8px;
+  margin-right: auto;
+}
+
 .stt-fields-foot button[type="submit"] {
   background: var(--stt-accent);
   border-color: var(--stt-accent);
@@ -609,6 +615,61 @@
   gap: 8px;
   padding: 10px 14px;
   border-top: 1px solid var(--stt-line);
+}
+
+/* -------------------------------------------- */
+/*  Import of a field set                       */
+/* -------------------------------------------- */
+
+.stt-import .stt-import-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--stt-ink);
+}
+
+.stt-import .stt-import-modes {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.stt-import .stt-import-modes label {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.stt-import .stt-import-modes small,
+.stt-import .stt-import-note {
+  color: var(--stt-muted);
+}
+
+.stt-import .stt-import-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 260px;
+  margin: 0;
+  padding: 8px 10px;
+  overflow-y: auto;
+  border: 1px solid var(--stt-line);
+  border-radius: 6px;
+  background: var(--stt-soft);
+  list-style: none;
+}
+
+.stt-import .stt-import-list li[data-kind="added"] i { color: var(--stt-good); }
+.stt-import .stt-import-list li[data-kind="removed"] i { color: var(--stt-bad); }
+.stt-import .stt-import-list li[data-kind="changed"] i,
+.stt-import .stt-import-list li[data-kind="order"] i { color: var(--stt-accent); }
+
+.stt-import .stt-import-list i {
+  width: 16px;
+  text-align: center;
 }
 
 /* -------------------------------------------- */

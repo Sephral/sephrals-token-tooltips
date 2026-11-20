@@ -16,10 +16,11 @@
 * **A column for the party:** choose how players see each other's heroes, for example how hurt a friend is without the exact hit points. Friendly NPCs keep their own setting.
 * **Floating numbers, per audience:** damage and healing float up from the token, exact for friends, described for foes ("a scratch", "badly hurt"), and on request in place of the system's own numbers.
 * **Observers see like owners:** a player who may observe a character sees its tooltip just like its owner.
-* **Ready for your system:** presets for D&D 5e, Pathfinder 2e, Savage Worlds and Crucible. Any other system shows the token bars and conditions right away.
+* **Ready for your system:** presets for D&D 5e, Pathfinder 2e, Savage Worlds, Crucible, Daggerheart, Call of Cthulhu and more. Any other system shows the token bars and conditions right away.
 * **More when you need it:** values often needed in play, such as passive Insight, the spell save DC or hero points, wait in the list for a tick.
 * **Your own values with a click:** pick from the common values of your system or from every value of a token, see its current value and add it.
 * **Live preview:** see a token as the GM, as its owner, as another player and as a party member before you save.
+* **Distance, tracker, sharing:** distance, height and cover on request, tooltips in the combat tracker, export and import of your fields.
 * **All tooltips at once:** hold Alt and every visible token shows its tooltip.
 * **Safe by design:** hidden tokens stay hidden, and names follow each token's own name display.
 

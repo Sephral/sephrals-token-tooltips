@@ -12,6 +12,13 @@ Each game system has a preset of fields. The GM switches fields on and off, chan
 | Pathfinder 2e | Name, HP, speed, effects and conditions (everyone, HP described for neutral and hostile tokens), temp HP, AC, Perception (GM, owners and observers), level (GM only), Fortitude, Reflex and Will (off) |
 | Savage Worlds | Name, wounds (described for neutral and hostile tokens), pace, effects (everyone), fatigue, Parry, Toughness with armor, bennies (GM, owners and observers) |
 | Crucible | Name, health, morale, stride, effects (everyone, health and morale described for neutral and hostile tokens), wounds, madness, physical defense (GM, owners and observers), level (GM only), Fortitude, Reflex and Willpower (off) |
+| Daggerheart | Name, hit points marked (described for neutral and hostile tokens), effects (everyone), stress, hope, armor, evasion, level of characters, difficulty and tier of adversaries (GM only) |
+| Call of Cthulhu 7th Edition | Name, HP (described for neutral and hostile tokens), movement rate, effects (everyone), magic points, sanity, luck of characters, armor (GM, owners, observers) |
+| Shadowdark RPG | Name, HP (described for neutral and hostile tokens), movement band of monsters, effects (everyone), AC, level, luck token of players (GM, owners, observers) |
+| Project FU | Name, HP (described for neutral and hostile tokens), effects (everyone), mind points, defense, magic defense, fabula points of characters, level (GM, owners, observers) |
+| Shadowrun 6th Edition | Name, physical monitor (described for neutral and hostile tokens), effects (everyone), stun monitor, edge, defense rating (GM, owners, observers) |
+| Dolmenwood | Name, HP (described for neutral and hostile tokens), speed, effects (everyone), AC, level (GM, owners, observers) |
+| RuneQuest: Roleplaying in Glorantha | Name, HP (described for neutral and hostile tokens), movement rate, effects (everyone), magic points, hero points (GM, owners, observers) |
 | Any other system | Name, bar 1 (everyone, described for neutral and hostile tokens), bar 2 (GM, owners and observers), effects and conditions (everyone). The bars show the attributes the token shows as its bars. |
 
 Some values are often needed in play but not at every table. They are part of the preset and start switched off, so a tick in *Show* is all it takes:
@@ -22,10 +29,27 @@ Some values are often needed in play but not at every table. They are part of th
 | Pathfinder 2e | Hero Points (characters), Focus Points (only with a maximum above zero), class DC |
 | Savage Worlds | Running die, Power Points (only with a maximum above zero), rank |
 | Crucible | Action points, focus, heroism |
+| Daggerheart | Damage thresholds (major and severe) |
+| Call of Cthulhu 7th Edition | Build, damage bonus |
+| Project FU | Inventory points, zenit, initiative, in crisis (shows *Yes*, for everyone) |
+| Shadowrun 6th Edition | Initiative |
 
+The presets of Daggerheart, Call of Cthulhu 7th Edition, Shadowdark, Project FU, Shadowrun 6th Edition, Dolmenwood and RuneQuest were written from the data models of the system releases listed under [Compatibility](#compatibility). Daggerheart counts hit points and stress as marked boxes, so a higher value is worse, and the health word follows the unmarked share.
+
+### Distance, elevation and cover
+
+Three fields exist for every system and start switched off, so existing worlds do not change. Tick *Show* in the field window to use them. They follow the audience and forms of the field like every other value.
+
+| Field | Shows |
+| --- | --- |
+| Distance | The distance from your token to the hovered one in the units of the scene, for example *35 ft*. It counts from your selected token (the first one other than the hovered token), else from the token of your character. Without either, the field stays out |
+| Elevation | The elevation of the token and, in brackets, the difference to your token, for example *10 ft (+5)*. Tokens on the ground with a viewer on the ground show nothing |
+| Cover | The cover the token has, where the system knows it: the cover status of D&D 5e (half, three quarters, total) and the cover effect of Pathfinder 2e (shows *Yes*). Other systems have no cover field |
+
+The distance is measured with the grid of the scene from the nearest space of one token to the nearest space of the other, so tokens next to each other are one step apart whatever their size, and diagonals follow the rule of the scene. Hex grids work the same way. Without a grid the gap between the two token frames counts. The measurement is horizontal, the elevation is its own field. The tooltips follow the selection and the moves of the token they count from. The preview in the field window measures from the nearest other token when nothing else is selected.
 Values that a token does not have stay out of its tooltip, for example the CR of a player character or temp HP of zero. Effects and conditions are the ones Foundry draws on the token.
 
-Things get no tooltip: heaps, chests and vaults of loot pile modules (merchants keep theirs) and loot actors of Pathfinder 2e. A token outside the window gets none either, also when it is hovered through the combat tracker or while Alt is held.
+Things get no tooltip: heaps, chests and vaults of loot pile modules (merchants keep theirs) and loot actors of Pathfinder 2e. A token outside the window gets none either, also while Alt is held. In the combat tracker the tooltip belongs to the entry instead, see [Combat tracker](#combat-tracker).
 
 ### Health words
 
@@ -83,6 +107,19 @@ The formats:
 
 Own fields start for the GM, owners and observers. The trash can removes them.
 
+### Export and import
+
+*Export* at the bottom of the field window saves the fields of this system as a JSON file: which fields show, their order, audience, forms and look, and your own fields with their data paths. No token values are in it. *Import* reads such a file and shows first what would change: new own fields, fields that are removed, changed settings per field (show, who sees it, forms, look) and a changed order. Then you choose:
+
+* **Merge:** fields the file does not mention stay as they are. Own fields of the file are added, and one whose id is already in use for another own field gets a new id.
+* **Replace:** the file decides everything. Fields it does not mention return to their defaults and own fields that are not in the file are removed.
+
+*Take over* changes the list in the window only, nothing is stored before *Save*, so the preview shows the result and a click on *Reset to defaults* or closing the window undoes it. A file from another system is read as far as its fields exist here, the others are skipped and counted. Files from a newer version of the module and files of other modules are refused.
+
+## Combat tracker
+
+With the setting *Tooltips in the combat tracker* (on by default, this device only) the tooltip of a combatant appears next to its entry in the combat tracker after the usual delay, built exactly like the tooltip of the token: same fields, audiences and forms for you, and the same rules for tokens a player cannot see. Combatants that are hidden from players are not listed for them, so they get nothing either. The token does not need to be on the screen, but it has to be on the viewed scene. While the pointer is on an entry, the tooltip of the token on the map does not also appear. The core tracker and its pop out window are supported on Foundry 13 and 14, a tracker that replaces the core one simply gets no tooltips.
+
 ## Floating numbers
 
 When the hit points of a token change, a number floats up from it. Every client decides for itself what its user sees, by the rules of the health field in the field window (audience, form per token disposition, party form). Nothing travels over the network.
@@ -94,14 +131,14 @@ When the hit points of a token change, a number floats up from it. Every client 
 | Others, form *Described* | A description by the size of the blow: *A scratch* (up to a tenth of the maximum), *Hurt* (a quarter), *Badly hurt* (half), *A brutal blow*, *Down* when it ends at zero. Healing: *A little better*, *Better*, *Much better*, *Fully healed* |
 | Others, form *Hidden*, or a health field the GM switched off | Nothing |
 
-Temporary hit points count with the rest. The health field of each preset: *HP* (D&D 5e, Pathfinder 2e), *Health* (Crucible), *Wounds* (Savage Worlds, shown as "+1 Wounds" when one is gained, descriptions without a share) and *Bar 1* (every other system). A heap, a chest and tokens the viewer cannot see float nothing.
+Temporary hit points count with the rest. The health field of each preset: *HP* (D&D 5e, Pathfinder 2e), *Health* (Crucible), *Wounds* (Savage Worlds, shown as "+1 Wounds" when one is gained, descriptions without a share) *Marked hit points* (Daggerheart), the physical monitor (Shadowrun 6th Edition) and *Bar 1* (every other system). A heap, a chest and tokens the viewer cannot see float nothing.
 
 ### Numbers the system floats itself
 
 D&D 5e, Pathfinder 2e and Crucible float their own exact numbers on every screen, so players would see the hit points of every monster. The setting *Floating numbers* chooses:
 
-* **Replace the system's numbers:** the module changes the system's text on its way to the screen. Exact stays as it is, described becomes the description, hidden drops it. No second number appears. In Crucible only the health number is changed, morale and other texts stay. Savage Worlds and other systems get a number from the module.
-* **Only where the system shows none** (default, so an update changes nothing in a running world): the systems above keep their numbers untouched. Savage Worlds and systems with token bars get the module's numbers.
+* **Replace the system's numbers:** the module changes the system's text on its way to the screen. Exact stays as it is, described becomes the description, hidden drops it. No second number appears. In Crucible only the health number is changed, morale and other texts stay. Shadowdark floats the signed change of its hit points like D&D 5e and is treated the same way. Savage Worlds and systems without numbers of their own (Call of Cthulhu 7th Edition, Shadowrun 6th Edition, Dolmenwood, RuneQuest, token bars) get a number from the module. Daggerheart and Project FU float texts of their own that cannot be read as an amount: the module leaves their numbers alone and floats none.
+* **Only where the system shows none** (default, so an update changes nothing in a running world): the systems above keep their numbers untouched. Savage Worlds and the systems without numbers of their own get the module's numbers.
 * **Off:** the module floats nothing and changes nothing.
 
 Foundry's own client setting *Scrolling Status Text* (core settings) turns every floating number off on a device, also these. Numbers from other modules that are not hit point changes of a token pass unchanged. A module that floats its own hit point numbers in addition cannot be recognized, choose *Off* or *Only where the system shows none* if two numbers appear.
@@ -131,6 +168,7 @@ All options are in *Game Settings → Configure Settings → Sephral’s Token T
 | Show all tooltips | The key for all tooltips: hold (default) or press once to switch on and again to switch off, for you |
 | Tooltips at the start of a turn (GM) | All tooltips for a few seconds at each combat turn, off by default, for you |
 | Seconds for the turn tooltips | 1 to 15, default 4, for you |
+| Tooltips in the combat tracker | The tooltip of a combatant next to its entry in the tracker, default on, for you |
 | Follow the name display of each token | Names only when the token shows its name to everyone (default on) |
 | Floating numbers | Replace the system's numbers, only where the system shows none (default), or off, for the world (GM) |
 | Configure fields | Opens the field window (GM) |
@@ -144,7 +182,7 @@ The module can take part in a small usage report shared by all of Sephral’s mo
 With the GM’s consent only the active GM’s browser counts, and it sends at most one report a day. The counts are kept in a hidden world setting, so all browsers and computers of the GM count together, and turning the statistics off deletes them. A copy of a world gets its own world ID. The question lists everything the report contains, from the Foundry version to a random world ID. For Token Tooltips it holds:
 
 * on how many of the last 30 days the module was used
-* whether the GM saw a tooltip, held or toggled the key for all tooltips and saw the tooltips at a turn start (once per session each), how often the GM saved the fields and added an own field, how many floating numbers the GM's screen showed or ruled on
+* whether the GM saw a tooltip, held or toggled the key for all tooltips and saw the tooltips at a turn start (once per session each), how often the GM saved, exported and imported the fields and added an own field, whether the GM saw distance, elevation or cover and a tooltip in the combat tracker (once per session each), how many floating numbers the GM's screen showed or ruled on
 * the settings *Look*, *Show tooltips*, *Position*, *Size*, *Show all tooltips*, *Tooltips at the start of a turn*, *Follow the name display of each token* and *Floating numbers* (only the chosen option)
 * where errors occur in the module code: file, line, error type and whether the error arose in the module itself, in Foundry, in the game system or in another module, never the error message or the name of another module
 
@@ -167,7 +205,8 @@ The first button in the module settings, *Sephral’s Modules* (GMs only), opens
 
 ## Compatibility
 
-* Foundry VTT 13 and 14, any game system. Presets for D&D 5e (5 and 6), Pathfinder 2e, Savage Worlds (5 and 6) and Crucible.
+* Foundry VTT 13 and 14, any game system. Presets for D&D 5e (5 and 6), Pathfinder 2e, Savage Worlds (5 and 6), Crucible, Daggerheart, Call of Cthulhu 7th Edition, Shadowdark, Project FU, Shadowrun 6th Edition, Dolmenwood and RuneQuest.
+* The data paths of the newer presets were read from the released systems: Daggerheart 2.12.9, Call of Cthulhu 7th Edition 9.2, Shadowdark 4.1.1, Project FU 4.16.3 and 5.0.0 rc 3, Shadowrun 6th Edition (Eden) 4.0.11, Dolmenwood 2.3.0 and RuneQuest 6.1.1. These systems decide which Foundry versions they run on. The module tells the GM once when a newer version of the system is installed.
 * The tooltips sit above the map and below windows, the sidebar and the floating bars of other modules.
 * Like every value that reaches a player's browser, the data behind a tooltip could be read by a player who opens the browser tools. Token Tooltips decides what is shown, not what Foundry sends.
 

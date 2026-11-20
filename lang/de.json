@@ -63,6 +63,10 @@
         "replace": "Zahlen des Systems ersetzen",
         "missing": "Nur wo das System keine zeigt",
         "off": "Aus"
+      },
+      "trackerTooltip": {
+        "name": "Tooltips im Kampftracker",
+        "hint": "Bleibst du mit dem Mauszeiger auf einem Kämpfer im Kampftracker, erscheint sein Tooltip neben dem Eintrag, mit denselben Feldeinstellungen wie auf der Karte. Versteckte Kämpfer bleiben für Spieler versteckt. Nur auf diesem Gerät."
       }
     },
     "Keys": {
@@ -130,7 +134,14 @@
       "pf2e": "Pathfinder 2e",
       "swade": "Savage Worlds",
       "crucible": "Crucible",
-      "generic": "Token-Leisten"
+      "generic": "Token-Leisten",
+      "daggerheart": "Daggerheart",
+      "CoC7": "Call of Cthulhu 7. Edition",
+      "shadowdark": "Shadowdark RPG",
+      "projectfu": "Project FU",
+      "shadowrun6-eden": "Shadowrun 6. Edition",
+      "dolmenwood": "Dolmenwood",
+      "rqg": "RuneQuest: Roleplaying in Glorantha"
     },
     "Choice": {
       "gm": "Nur SL",
@@ -156,7 +167,9 @@
       "list": "Liste",
       "modifier": "Modifikator",
       "die": "Würfel",
-      "senses": "Sinne"
+      "senses": "Sinne",
+      "distance": "Entfernung",
+      "elevation": "Höhe"
     },
     "Disposition": {
       "party": "Gruppenmitglied",
@@ -206,7 +219,38 @@
       "rank": "Rang",
       "actionPoints": "Aktionspunkte",
       "focus": "Fokus",
-      "heroism": "Heldentum"
+      "heroism": "Heldentum",
+      "distance": "Entfernung",
+      "elevation": "Höhe",
+      "cover": "Deckung",
+      "hpMarked": "Trefferpunkte markiert",
+      "stress": "Stress",
+      "hope": "Hoffnung",
+      "armor": "Rüstung",
+      "evasion": "Ausweichen",
+      "difficulty": "Schwierigkeit",
+      "thresholds": "Schadensschwellen",
+      "tier": "Tier",
+      "magicPoints": "Magiepunkte",
+      "sanity": "Geistige Stabilität",
+      "luck": "Glück",
+      "moveRate": "Bewegungsrate",
+      "build": "Statur",
+      "damageBonus": "Schadensbonus",
+      "move": "Bewegung",
+      "luckToken": "Glückstoken",
+      "mindPoints": "Geistpunkte",
+      "defense": "Abwehr",
+      "magicDefense": "Magische Abwehr",
+      "fabulaPoints": "Fabulapunkte",
+      "inventoryPoints": "Inventarpunkte",
+      "zenit": "Zenit",
+      "initiative": "Initiative",
+      "crisis": "In der Krise",
+      "physicalMonitor": "Körperlicher Zustandsmonitor",
+      "stunMonitor": "Betäubungsmonitor",
+      "edge": "Edge",
+      "defenseRating": "Verteidigungswert"
     },
     "Health": {
       "unhurt": "Unverletzt",
@@ -294,6 +338,35 @@
       "healSome": "Besser",
       "healMuch": "Viel besser",
       "healFull": "Wieder fit"
+    },
+    "Transfer": {
+      "export": "Exportieren",
+      "exportHint": "Speichert die Felder dieses Systems samt deiner eigenen Felder als Datei",
+      "import": "Importieren",
+      "importHint": "Lädt Felder aus einer exportierten Datei. Du siehst vorher, was sich ändert",
+      "exported": "Die Felder sind als Datei gespeichert.",
+      "imported": "Felder übernommen. Gespeichert wird erst mit Speichern.",
+      "title": "Felder importieren",
+      "intro": "Diese Änderungen würden an der Feldliste gemacht. Gespeichert wird erst mit Speichern.",
+      "merge": "Zusammenführen",
+      "mergeHint": "Felder, die in der Datei fehlen, bleiben, wie sie sind.",
+      "replace": "Ersetzen",
+      "replaceHint": "Die Datei bestimmt alles. Andere Felder gehen auf ihre Vorgaben zurück, eigene Felder, die nicht in der Datei stehen, entfallen.",
+      "apply": "Übernehmen",
+      "cancel": "Abbrechen",
+      "added": "Neues eigenes Feld: {name}",
+      "removed": "Entfällt: {name}",
+      "order": "Die Reihenfolge der Felder ändert sich",
+      "nothing": "Nichts ändert sich.",
+      "otherPreset": "Die Datei stammt aus der Vorlage {preset}. Übernommen werden nur Felder, die es hier gibt.",
+      "unknown": "{count} Felder der Datei gibt es hier nicht, sie werden übersprungen.",
+      "dropped": "{count} eigene Felder der Datei waren unbrauchbar und werden übersprungen.",
+      "error": {
+        "json": "Diese Datei lässt sich nicht als JSON lesen.",
+        "module": "Das ist keine Felderdatei von Token Tooltips.",
+        "format": "Diese Datei stammt aus einer neueren Version. Aktualisiere zuerst das Modul.",
+        "empty": "Die Datei enthält keine Felder."
+      }
     }
   }
 }

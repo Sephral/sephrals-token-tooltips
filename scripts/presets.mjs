@@ -42,6 +42,20 @@ const NAME = {id: "name", type: "name", label: "STT.Field.name", icon: "fa-solid
 const EFFECTS = {id: "effects", type: "effects", label: "STT.Field.effects", icon: "fa-solid fa-bolt",
   read: ({actor, env}) => env.effectsOf(actor), defaults: defaults("everyone", EXACT)};
 
+/** Distance and elevation: from the user's token to the hovered one. Off until the GM ticks them. */
+const DISTANCE = {id: "tokenDistance", type: "distance", needsOrigin: true, label: "STT.Field.distance", icon: "fa-solid fa-ruler",
+  read: ({token, env}) => env.distanceTo?.(token) ?? null, defaults: defaults("everyone", EXACT, false)};
+const ELEVATION = {id: "tokenElevation", type: "elevation", needsOrigin: true, label: "STT.Field.elevation", icon: "fa-solid fa-arrows-up-down",
+  read: ({token, env}) => env.elevationOf?.(token) ?? null, defaults: defaults("everyone", EXACT, false)};
+
+/**
+ * The cover field of a system that knows cover.
+ * @param {Function} read   ({actor, env}) => value
+ * @returns {object}
+ */
+const coverField = read => ({id: "tokenCover", type: "text", label: "STT.Field.cover", icon: "fa-solid fa-umbrella", read,
+  defaults: defaults("everyone", EXACT, false)});
+
 /**
  * A resource {value, max} from a path, or null.
  * @param {string} path
@@ -124,6 +138,28 @@ export function dnd5eSpellDc({actor}) {
   return Number.isFinite(dc) && (dc > 0) ? dc : null;
 }
 
+/**
+ * The cover a dnd5e actor has: the status of the system (half, three quarters or total cover), by its name.
+ * @param {{actor: object, env: object}} data
+ * @returns {string|null}
+ */
+export function dnd5eCover({actor, env}) {
+  const statuses = actor?.statuses;
+  if ( typeof statuses?.has !== "function" ) return null;
+  const key = ["coverTotal", "coverThreeQuarters", "coverHalf"].find(status => statuses.has(status));
+  return key ? env.choiceName("CONFIG.DND5E.statusEffects", key) : null;
+}
+
+/**
+ * Whether a Pathfinder 2e actor has the cover effect (an effect item with the slug "effect-cover").
+ * @param {{actor: object}} data
+ * @returns {boolean|null}
+ */
+export function pf2eCover({actor}) {
+  const effects = actor?.itemTypes?.effect;
+  return Array.isArray(effects) && effects.some(e => e.slug === "effect-cover") ? true : null;
+}
+
 const DND5E = {
   id: "dnd5e",
   fields: [
@@ -153,6 +189,9 @@ const DND5E = {
       path: "system.details.level", defaults: defaults("owner", NONE)},
     {id: "cr", type: "cr", label: "STT.Field.cr", icon: "fa-solid fa-skull", actorTypes: ["npc"],
       path: "system.details.cr", defaults: defaults("gm", NONE)},
+    DISTANCE,
+    ELEVATION,
+    coverField(dnd5eCover),
     EFFECTS
   ]
 };
@@ -234,6 +273,9 @@ const PF2E = {
       path: "system.resources.focus", read: poolAt("system.resources.focus"), defaults: defaults("owner", NONE, false, "number")},
     {id: "classDc", type: "number", label: "STT.Field.classDc", icon: "fa-solid fa-bullseye",
       path: "system.attributes.classDC.value", defaults: defaults("owner", NONE, false)},
+    DISTANCE,
+    ELEVATION,
+    coverField(pf2eCover),
     EFFECTS
   ]
 };
@@ -300,6 +342,8 @@ const SWADE = {
       read: poolAt("system.powerPoints.general"), defaults: defaults("owner", NONE, false, "number")},
     {id: "rank", type: "text", label: "STT.Field.rank", icon: "fa-solid fa-ranking-star",
       path: "system.advances.rank", defaults: defaults("owner", NONE, false)},
+    DISTANCE,
+    ELEVATION,
     EFFECTS
   ]
 };
@@ -349,6 +393,257 @@ const CRUCIBLE = {
       path: "system.resources.focus", read: cruciblePool("focus"), defaults: defaults("owner", NONE, false, "number")},
     {id: "heroism", type: "resource", describe: false, label: "STT.Field.heroism", icon: "fa-solid fa-medal",
       path: "system.resources.heroism", read: cruciblePool("heroism"), defaults: defaults("owner", NONE, false, "number")},
+    DISTANCE,
+    ELEVATION,
+    EFFECTS
+  ]
+};
+
+/* -------------------------------------------- */
+/*  Daggerheart                                 */
+/* -------------------------------------------- */
+
+/**
+ * The damage thresholds of a Daggerheart character or adversary: "major / severe".
+ * @param {{actor: object}} data
+ * @returns {string|null}
+ */
+export function daggerheartThresholds({actor}) {
+  const major = Number(getPath(actor, "system.damageThresholds.major"));
+  const severe = Number(getPath(actor, "system.damageThresholds.severe"));
+  return (major > 0) || (severe > 0) ? `${major || 0} / ${severe || 0}` : null;
+}
+
+const DAGGERHEART = {
+  id: "daggerheart",
+  objectTypes: ["party"],
+  fields: [
+    NAME,
+    // Hit points and stress are marked: a higher value is worse
+    {id: "hp", type: "count", label: "STT.Field.hpMarked", icon: "fa-solid fa-heart",
+      read: poolAt("system.resources.hitPoints"), defaults: defaults("everyone", HEALTH)},
+    {id: "stress", type: "count", describe: false, label: "STT.Field.stress", icon: "fa-solid fa-bolt-lightning",
+      read: poolAt("system.resources.stress"), defaults: defaults("owner", NONE)},
+    {id: "hope", type: "resource", describe: false, label: "STT.Field.hope", icon: "fa-solid fa-sun", actorTypes: ["character"],
+      read: poolAt("system.resources.hope"), defaults: defaults("owner", NONE, true, "number")},
+    {id: "armor", type: "resource", describe: false, label: "STT.Field.armor", icon: "fa-solid fa-shield-halved",
+      actorTypes: ["character"], read: poolAt("system.resources.armor"), defaults: defaults("owner", NONE, true, "number")},
+    {id: "evasion", type: "number", label: "STT.Field.evasion", icon: "fa-solid fa-person-running",
+      actorTypes: ["character", "companion"], path: "system.evasion", defaults: defaults("owner", NONE)},
+    {id: "difficulty", type: "number", label: "STT.Field.difficulty", icon: "fa-solid fa-bullseye",
+      actorTypes: ["adversary", "environment"], path: "system.difficulty", defaults: defaults("gm", NONE)},
+    {id: "level", type: "number", label: "STT.Field.level", icon: "fa-solid fa-star", actorTypes: ["character"],
+      path: "system.levelData.level.current", defaults: defaults("owner", NONE)},
+    {id: "tier", type: "number", label: "STT.Field.tier", icon: "fa-solid fa-layer-group", actorTypes: ["adversary"],
+      path: "system.tier", defaults: defaults("gm", NONE)},
+    // Often needed in play, off until the GM ticks them
+    {id: "thresholds", type: "text", label: "STT.Field.thresholds", icon: "fa-solid fa-gauge-high",
+      actorTypes: ["character", "adversary"], read: daggerheartThresholds, defaults: defaults("owner", NONE, false)},
+    DISTANCE,
+    ELEVATION,
+    EFFECTS
+  ]
+};
+
+/* -------------------------------------------- */
+/*  Call of Cthulhu 7th Edition                 */
+/* -------------------------------------------- */
+
+const COC7 = {
+  id: "CoC7",
+  // Containers are things, not creatures
+  objectTypes: ["container"],
+  fields: [
+    NAME,
+    {id: "hp", type: "resource", label: "STT.Field.hp", icon: "fa-solid fa-heart", read: resourceAt("system.attribs.hp"),
+      defaults: defaults("everyone", HEALTH)},
+    {id: "mp", type: "resource", describe: false, label: "STT.Field.magicPoints", icon: "fa-solid fa-wand-sparkles",
+      read: resourceAt("system.attribs.mp"), defaults: defaults("owner", NONE)},
+    {id: "san", type: "resource", describe: false, label: "STT.Field.sanity", icon: "fa-solid fa-brain",
+      read: resourceAt("system.attribs.san"), defaults: defaults("owner", NONE, true, "number")},
+    {id: "luck", type: "number", label: "STT.Field.luck", icon: "fa-solid fa-clover", actorTypes: ["character"],
+      path: "system.attribs.lck.value", defaults: defaults("owner", NONE)},
+    {id: "mov", type: "number", label: "STT.Field.moveRate", icon: "fa-solid fa-person-running",
+      path: "system.attribs.mov.value", defaults: defaults("everyone", EXACT)},
+    {id: "armor", type: "text", label: "STT.Field.armor", icon: "fa-solid fa-shield-halved",
+      path: "system.attribs.armor.value", defaults: defaults("owner", NONE)},
+    // Often needed in play, off until the GM ticks them
+    {id: "build", type: "number", label: "STT.Field.build", icon: "fa-solid fa-weight-hanging",
+      path: "system.attribs.build.value", defaults: defaults("owner", NONE, false)},
+    {id: "damageBonus", type: "text", label: "STT.Field.damageBonus", icon: "fa-solid fa-hand-fist",
+      path: "system.attribs.db.value", defaults: defaults("owner", NONE, false)},
+    DISTANCE,
+    ELEVATION,
+    EFFECTS
+  ]
+};
+
+/* -------------------------------------------- */
+/*  Shadowdark                                  */
+/* -------------------------------------------- */
+
+/**
+ * The movement band of a Shadowdark monster (close, near, far), by its name.
+ * @param {{actor: object, env: object}} data
+ * @returns {string|null}
+ */
+export function shadowdarkMove({actor, env}) {
+  const move = getPath(actor, "system.move");
+  if ( !move || (typeof move !== "string") || (move === "none") ) return null;
+  return env.choiceName("CONFIG.SHADOWDARK.NPC_MOVES", move);
+}
+
+const SHADOWDARK = {
+  id: "shadowdark",
+  // The light sources are actors of their own
+  objectTypes: ["Light"],
+  fields: [
+    NAME,
+    {id: "hp", type: "resource", label: "STT.Field.hp", icon: "fa-solid fa-heart", read: resourceAt("system.attributes.hp"),
+      defaults: defaults("everyone", HEALTH)},
+    {id: "ac", type: "number", label: "STT.Field.ac", icon: "fa-solid fa-shield-halved", path: "system.attributes.ac.value",
+      defaults: defaults("owner", NONE)},
+    {id: "move", type: "text", label: "STT.Field.move", icon: "fa-solid fa-person-running", actorTypes: ["NPC"],
+      read: shadowdarkMove, defaults: defaults("everyone", EXACT)},
+    {id: "level", type: "number", label: "STT.Field.level", icon: "fa-solid fa-star", actorTypes: ["Player", "NPC"],
+      path: "system.level.value", defaults: defaults("owner", NONE)},
+    {id: "luck", type: "text", label: "STT.Field.luckToken", icon: "fa-solid fa-clover", actorTypes: ["Player"],
+      path: "system.luck.available", defaults: defaults("owner", NONE)},
+    DISTANCE,
+    ELEVATION,
+    EFFECTS
+  ]
+};
+
+/* -------------------------------------------- */
+/*  Project FU                                  */
+/* -------------------------------------------- */
+
+const PROJECTFU = {
+  id: "projectfu",
+  // The party and the stash are no creatures
+  objectTypes: ["party", "stash"],
+  fields: [
+    NAME,
+    {id: "hp", type: "resource", label: "STT.Field.hp", icon: "fa-solid fa-heart", read: resourceAt("system.resources.hp"),
+      defaults: defaults("everyone", HEALTH)},
+    {id: "mp", type: "resource", describe: false, label: "STT.Field.mindPoints", icon: "fa-solid fa-brain",
+      read: resourceAt("system.resources.mp"), defaults: defaults("owner", NONE)},
+    {id: "def", type: "number", label: "STT.Field.defense", icon: "fa-solid fa-shield-halved",
+      path: "system.derived.def.value", defaults: defaults("owner", NONE)},
+    {id: "mdef", type: "number", label: "STT.Field.magicDefense", icon: "fa-solid fa-shield",
+      path: "system.derived.mdef.value", defaults: defaults("owner", NONE)},
+    {id: "fp", type: "number", label: "STT.Field.fabulaPoints", icon: "fa-solid fa-star", actorTypes: ["character"],
+      path: "system.resources.fp.value", defaults: defaults("owner", NONE)},
+    {id: "level", type: "number", label: "STT.Field.level", icon: "fa-solid fa-ranking-star", path: "system.level.value",
+      defaults: defaults("owner", NONE)},
+    // Often needed in play, off until the GM ticks them
+    {id: "ip", type: "resource", describe: false, label: "STT.Field.inventoryPoints", icon: "fa-solid fa-suitcase",
+      actorTypes: ["character"], read: resourceAt("system.resources.ip"), defaults: defaults("owner", NONE, false, "number")},
+    {id: "zenit", type: "number", label: "STT.Field.zenit", icon: "fa-solid fa-coins", actorTypes: ["character"],
+      path: "system.resources.zenit.value", defaults: defaults("owner", NONE, false)},
+    {id: "init", type: "number", label: "STT.Field.initiative", icon: "fa-solid fa-gauge-high",
+      path: "system.derived.init.value", defaults: defaults("owner", NONE, false)},
+    {id: "crisis", type: "text", label: "STT.Field.crisis", icon: "fa-solid fa-triangle-exclamation",
+      path: "system.resources.hp.inCrisis", defaults: defaults("everyone", EXACT, false)},
+    DISTANCE,
+    ELEVATION,
+    EFFECTS
+  ]
+};
+
+/* -------------------------------------------- */
+/*  Shadowrun 6th Edition (Eden)                */
+/* -------------------------------------------- */
+
+const SHADOWRUN6 = {
+  id: "shadowrun6-eden",
+  // Matrix hosts are places, not creatures
+  objectTypes: ["host"],
+  fields: [
+    NAME,
+    // The monitors count the boxes that are left: value is the maximum minus the damage
+    {id: "physical", type: "resource", label: "STT.Field.physicalMonitor", icon: "fa-solid fa-heart",
+      read: resourceAt("system.physical"), defaults: defaults("everyone", HEALTH)},
+    {id: "stun", type: "resource", label: "STT.Field.stunMonitor", icon: "fa-solid fa-face-dizzy",
+      read: resourceAt("system.stun"), defaults: defaults("owner", NONE)},
+    {id: "edge", type: "resource", describe: false, label: "STT.Field.edge", icon: "fa-solid fa-bolt",
+      read: poolAt("system.edge"), defaults: defaults("owner", NONE, true, "number")},
+    {id: "defense", type: "number", label: "STT.Field.defenseRating", icon: "fa-solid fa-shield-halved",
+      path: "system.defenserating.physical.pool", defaults: defaults("owner", NONE)},
+    // Often needed in play, off until the GM ticks them
+    {id: "initiative", type: "number", label: "STT.Field.initiative", icon: "fa-solid fa-gauge-high",
+      path: "system.initiative.physical.pool", defaults: defaults("owner", NONE, false)},
+    DISTANCE,
+    ELEVATION,
+    EFFECTS
+  ]
+};
+
+/* -------------------------------------------- */
+/*  Dolmenwood                                  */
+/* -------------------------------------------- */
+
+/**
+ * Dolmenwood hit points: the current value and the maximum with the effects of items (system.final), else the base.
+ * @param {{actor: object}} data
+ * @returns {{value: number, max: number}|null}
+ */
+export function dolmenwoodHp({actor}) {
+  const value = getPath(actor, "system.hp.value");
+  if ( (value === undefined) || (value === null) ) return null;
+  return {value, max: getPath(actor, "system.final.hp.max") ?? getPath(actor, "system.hp.max")};
+}
+
+/**
+ * Dolmenwood speed in feet per round with armor, load and effects (system.final), else the base.
+ * @param {{actor: object}} data
+ * @returns {Array<{type: string, value: number, units: string}>|null}
+ */
+export function dolmenwoodSpeed({actor}) {
+  const value = Number(getPath(actor, "system.final.speed") ?? getPath(actor, "system.speed"));
+  return value > 0 ? [{type: "walk", value, units: "ft"}] : null;
+}
+
+const DOLMENWOOD = {
+  id: "dolmenwood",
+  objectTypes: ["Vehicle"],
+  fields: [
+    NAME,
+    {id: "hp", type: "resource", label: "STT.Field.hp", icon: "fa-solid fa-heart", read: dolmenwoodHp,
+      defaults: defaults("everyone", HEALTH)},
+    {id: "ac", type: "number", label: "STT.Field.ac", icon: "fa-solid fa-shield-halved",
+      read: ({actor}) => getPath(actor, "system.final.ac") ?? getPath(actor, "system.ac") ?? null,
+      defaults: defaults("owner", NONE)},
+    {id: "speed", type: "movement", label: "STT.Field.speed", icon: "fa-solid fa-person-running", read: dolmenwoodSpeed,
+      defaults: defaults("everyone", EXACT)},
+    {id: "level", type: "number", label: "STT.Field.level", icon: "fa-solid fa-star", path: "system.level",
+      defaults: defaults("owner", NONE)},
+    DISTANCE,
+    ELEVATION,
+    EFFECTS
+  ]
+};
+
+/* -------------------------------------------- */
+/*  RuneQuest: Roleplaying in Glorantha         */
+/* -------------------------------------------- */
+
+const RQG = {
+  id: "rqg",
+  fields: [
+    NAME,
+    {id: "hp", type: "resource", label: "STT.Field.hp", icon: "fa-solid fa-heart",
+      read: resourceAt("system.attributes.hitPoints"), defaults: defaults("everyone", HEALTH)},
+    {id: "mp", type: "resource", describe: false, label: "STT.Field.magicPoints", icon: "fa-solid fa-wand-sparkles",
+      read: resourceAt("system.attributes.magicPoints"), defaults: defaults("owner", NONE)},
+    {id: "heroPoints", type: "number", label: "STT.Field.heroPoints", icon: "fa-solid fa-medal",
+      path: "system.attributes.heroPoints", defaults: defaults("owner", NONE)},
+    {id: "move", type: "number", label: "STT.Field.moveRate", icon: "fa-solid fa-person-running",
+      read: ({actor}) => getPath(actor, "system.attributes.move.equipped") ?? getPath(actor, "system.attributes.move.value") ?? null,
+      defaults: defaults("everyone", EXACT)},
+    DISTANCE,
+    ELEVATION,
     EFFECTS
   ]
 };
@@ -372,12 +667,16 @@ const GENERIC = {
       defaults: defaults("everyone", HEALTH)},
     {id: "bar2", type: "bar", label: "STT.Field.bar2", icon: "fa-solid fa-circle-half-stroke", read: tokenBar("bar2"),
       defaults: defaults("owner", NONE)},
+    DISTANCE,
+    ELEVATION,
     EFFECTS
   ]
 };
 
 /** All presets by system id. */
-export const PRESETS = {dnd5e: DND5E, pf2e: PF2E, swade: SWADE, crucible: CRUCIBLE, generic: GENERIC};
+export const PRESETS = {dnd5e: DND5E, pf2e: PF2E, swade: SWADE, crucible: CRUCIBLE, daggerheart: DAGGERHEART,
+  CoC7: COC7, shadowdark: SHADOWDARK, projectfu: PROJECTFU, "shadowrun6-eden": SHADOWRUN6, dolmenwood: DOLMENWOOD, rqg: RQG,
+  generic: GENERIC};
 
 /**
  * The preset of a game system; systems without their own use the generic one.

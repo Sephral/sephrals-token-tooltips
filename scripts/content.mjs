@@ -67,7 +67,7 @@ export function tooltipData(token, {fields, viewer, preview=false}) {
       isGM: viewer.isGM}, CONST.TOKEN_DISPLAY_MODES);
     if ( allowed ) name = doc.name;
   }
-  const {rows, errors} = doc.actor ? buildRows(active, {viewer, read: field => readField(field, doc), t, labelOf: fieldLabel})
+  const {rows, errors} = doc.actor ? buildRows(active, {viewer, read: field => readField(field, doc, {preview}), t, labelOf: fieldLabel})
     : {rows: [], errors: []};
   if ( !name && !rows.length ) return null;
   return {name, rows, errors};

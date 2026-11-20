@@ -29,13 +29,24 @@ export const MODES = ["replace", "missing", "off"];
 /**
  * The health of each preset: the field whose rules decide who sees what, the path of temporary hit points, whether a
  * higher value is worse (wounds) and what the system floats itself. own: "plain" is a signed number, "health" a signed
- * number followed by the name of the health pool (Crucible), null: the system floats nothing.
+ * number followed by the name of the health pool (Crucible), null: the system floats nothing. leave: the system floats
+ * texts of its own that cannot be read as amounts, the module floats nothing and changes nothing.
  */
 export const SOURCES = {
   dnd5e: {field: "hp", temp: "system.attributes.hp.temp", own: "plain"},
   pf2e: {field: "hp", temp: "system.attributes.hp.temp", own: "plain"},
   crucible: {field: "health", own: "health"},
   swade: {field: "wounds", worse: "up", own: null},
+  // Shadowdark floats the signed change of its hit points like dnd5e does
+  shadowdark: {field: "hp", own: "plain"},
+  // Systems that float texts of their own which this module cannot read as an amount: it leaves them alone (leave)
+  daggerheart: {field: "hp", worse: "up", own: null, leave: true},
+  projectfu: {field: "hp", own: null, leave: true},
+  // Systems whose code floats nothing (checked in their releases): the module floats the hit points
+  CoC7: {field: "hp", own: null},
+  "shadowrun6-eden": {field: "physical", own: null},
+  dolmenwood: {field: "hp", own: null},
+  rqg: {field: "hp", own: null},
   generic: {field: "bar1", own: null}
 };
 
@@ -153,7 +164,7 @@ export function floaterFor(form, change, {worse="down", label="", word}) {
  * @returns {boolean}         Numbers from the module itself (not the system's own)
  */
 export function drawsOwn(mode, source) {
-  return (mode !== "off") && !source.own;
+  return (mode !== "off") && !source.own && !source.leave;
 }
 
 /**
