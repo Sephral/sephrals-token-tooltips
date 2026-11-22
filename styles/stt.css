@@ -915,3 +915,74 @@
   text-align: center;
   font-size: 12px;
 }
+
+/* -------------------------------------------- */
+/*  Sample windows (api.samples)                */
+/* -------------------------------------------- */
+
+.stt-sample .stt-sample-tooltips h4 {
+  margin: 10px 0 6px;
+  font-size: 13px;
+}
+
+.stt-sample .stt-sample-note {
+  margin: 0 0 4px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.stt-sample .stt-sample-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+/* The tooltips sit in the window instead of floating over the canvas */
+.stt-sample .stt-sample-grid .stt-tooltip {
+  position: static;
+  animation: none;
+  flex: 0 0 auto;
+  width: 200px;
+  min-width: 0;
+}
+
+.stt-sample .stt-sample-indicator {
+  display: inline-block;
+  margin: 0 0 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgb(28 26 24 / 0.82);
+  color: #ece5d8;
+  font-size: 12px;
+}
+
+.stt-sample .stt-sample-floaters {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #2b2d31;
+}
+
+.stt-sample .stt-sample-floater-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 1fr;
+  align-items: center;
+  min-height: 34px;
+  gap: 8px;
+}
+
+.stt-sample .stt-sample-floater-head,
+.stt-sample .stt-sample-floater-who {
+  color: #ece5d8;
+  font-size: 12px;
+}
+
+.stt-sample .stt-sample-floater {
+  font-family: var(--font-body, "Signika", sans-serif);
+  font-weight: 700;
+  line-height: 1.1;
+  text-shadow: 0 0 3px #000, 0 0 3px #000;
+}

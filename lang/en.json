@@ -375,6 +375,20 @@
       "off": "off",
       "modeLabel": "How the file is used",
       "foot": "Apply puts the fields into this window. They are kept once you press Save."
+    },
+    "Sample": {
+      "GroupTooltips": "Tooltips",
+      "GroupFields": "Field window",
+      "Gm": "Tooltips as GM",
+      "Player": "Tooltips as a player",
+      "All": "All tooltips at once",
+      "Floaters": "Floating numbers",
+      "Fields": "Tooltip fields",
+      "Picker": "Tooltip fields: common values",
+      "PickerAll": "Tooltip fields: all values of the token",
+      "Import": "Tooltip fields: import",
+      "GmNote": "The GM sees every value exactly.",
+      "PlayerNote": "A player owns Ari. Everyone else shows what the GM allows for the party and for hostile tokens."
     }
   }
 }

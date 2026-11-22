@@ -4,6 +4,7 @@ import {saveDebugFile} from "./debug-file.mjs";
 import {registerHubModule} from "./hub.mjs";
 import {openFields, refreshPreview} from "./fields-app.mjs";
 import {registerFloaters} from "./floaters.mjs";
+import {sampleWindows} from "./sample-windows.mjs";
 import {applyModuleLanguage} from "./language.mjs";
 import {clear, concerns, followsOrigin, onCombatTurn, onDestroyToken, onHoverToken, onKey, onRefreshToken,
   onRenderTracker, refresh, reposition, watchPointer} from "./overlay.mjs";
@@ -83,7 +84,9 @@ Hooks.once("init", () => {
     /** Check the module (GM). */
     runSelfTest,
     /** Save the debug file of Sephral's modules (GM): about one chat message, or without an id the latest state. */
-    saveDebugFile: messageId => saveDebugFile(messageId ?? null, {moduleId: MODULE_ID})
+    saveDebugFile: messageId => saveDebugFile(messageId ?? null, {moduleId: MODULE_ID}),
+    /** Windows filled with made-up tokens, nothing saved (translators, testing; see samples.mjs). */
+    samples: () => sampleWindows()
   };
 });
 

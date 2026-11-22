@@ -223,6 +223,9 @@ The first button in the module settings, *Sephral’s Modules* (GMs only), opens
 | `refresh()` | Redraws the tooltips on the screen |
 | `runSelfTest()` | The self test (GM) |
 | `saveDebugFile()` | Saves the debug file of Sephral’s modules (GM) |
+| `samples()` | Lists sample windows with made-up tokens: tooltips as GM and as a player, all tooltips at once, floating numbers, the field window and its import question |
+
+The sample windows show the tooltip elements of a made-up party and its foes, rendered by the module's own code from actors that exist only in memory. They create no token, change no scene and save nothing, buttons that would save, export or import only say that they do nothing.
 
 `registerField` takes:
 

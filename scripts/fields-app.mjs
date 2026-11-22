@@ -73,6 +73,15 @@ export class FieldConfig extends HandlebarsApplicationMixin(ApplicationV2) {
     return t("STT.Fields.title");
   }
 
+  /**
+   * The token the preview and the picker read: the one a sample window carries (sample-windows.mjs), else the
+   * selected token of the scene.
+   * @returns {Token|null}
+   */
+  #token() {
+    return this.sampleToken ?? FieldConfig.previewToken();
+  }
+
   /** @override */
   async _prepareContext() {
     const preset = presetFor(game.system.id);
@@ -194,7 +203,7 @@ export class FieldConfig extends HandlebarsApplicationMixin(ApplicationV2) {
   updatePreview() {
     const box = this.element?.querySelector(".stt-preview");
     if ( !box ) return;
-    const token = FieldConfig.previewToken();
+    const token = this.#token();
     const name = box.querySelector(".stt-preview-token");
     if ( name ) name.textContent = token ? token.document.name : t("STT.Fields.noToken");
     const chosen = this.#previewDisposition;
@@ -295,7 +304,7 @@ export class FieldConfig extends HandlebarsApplicationMixin(ApplicationV2) {
     line.hidden = !path;
     line.classList.remove("missing");
     if ( !path ) return;
-    const token = FieldConfig.previewToken();
+    const token = this.#token();
     if ( !token?.actor ) {
       line.textContent = t("STT.Picker.noPreviewToken");
       return;
@@ -366,7 +375,7 @@ export class FieldConfig extends HandlebarsApplicationMixin(ApplicationV2) {
    * @returns {object[]|null}   null: the full list without a token
    */
   #pickerSource() {
-    const token = FieldConfig.previewToken();
+    const token = this.#token();
     const preset = presetFor(game.system.id);
     const i18n = {has: k => game.i18n.has(k), t};
     if ( this.#picker.tab === "common" ) {
@@ -405,7 +414,7 @@ export class FieldConfig extends HandlebarsApplicationMixin(ApplicationV2) {
     const note = panel.querySelector(".stt-picker-note");
     const scroll = keepScroll ? listBox.scrollTop : 0;
     const source = this.#pickerSource();
-    const token = FieldConfig.previewToken();
+    const token = this.#token();
     note.textContent = tab === "all" ? (token?.actor ? t("STT.Picker.valuesOf", {name: token.document.name}) : "")
       : (source?.length ? "" : t("STT.Picker.noCommon"));
     note.hidden = !note.textContent;
@@ -528,7 +537,7 @@ export class FieldConfig extends HandlebarsApplicationMixin(ApplicationV2) {
     this.#fields.push({...field, config: {...field.defaults, forms: {...field.defaults.forms}}});
     this.#draft = {label: "", path: "", format: custom.format};
     this.#setPicker(false);
-    countFeature(MODULE_ID, "customField");
+    if ( !this.isSample ) countFeature(MODULE_ID, "customField");
     this.render();
   }
 
@@ -627,20 +636,20 @@ export class FieldConfig extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   /**
-   * Show what an import would change, with the choice between merging and replacing.
+   * The content of the import question: the choice between merging and replacing, the changes and notes.
    * @param {object} plans    By mode
    * @param {object} parsed   The file
    * @param {string} presetId
-   * @returns {Promise<"merge"|"replace"|null>}
+   * @returns {string}
    */
-  static #askImport(plans, parsed, presetId) {
+  static importContent(plans, parsed, presetId) {
     const notes = [];
     if ( parsed.preset && (parsed.preset !== presetId) ) {
       notes.push(t("STT.Transfer.otherPreset", {preset: game.i18n.has(`STT.Preset.${parsed.preset}`) ? t(`STT.Preset.${parsed.preset}`) : parsed.preset}));
     }
     if ( plans.merge.unknown.length ) notes.push(t("STT.Transfer.unknown", {count: plans.merge.unknown.length}));
     if ( parsed.dropped ) notes.push(t("STT.Transfer.dropped", {count: parsed.dropped}));
-    const content = `<div class="stt-import-body">
+    return `<div class="stt-import-body">
       <input type="hidden" name="mode" value="merge">
       <div class="stt-import-modes" role="radiogroup" aria-label="${esc(t("STT.Transfer.modeLabel"))}">
         <button type="button" role="radio" aria-checked="true" class="active" data-mode="merge">
@@ -653,41 +662,60 @@ export class FieldConfig extends HandlebarsApplicationMixin(ApplicationV2) {
       ${notes.map(note => `<p class="stt-import-note"><i class="fa-solid fa-circle-info" inert></i> ${esc(note)}</p>`).join("")}
       <p class="stt-import-foot">${esc(t("STT.Transfer.foot"))}</p>
     </div>`;
+  }
+
+  /**
+   * Wire the import question: the mode buttons switch the list of changes.
+   * @param {object} dialog   The DialogV2
+   * @param {object} plans    By mode
+   */
+  static wireImport(dialog, plans) {
+    const frame = dialog.element;
+    frame.dataset.sttTheme = setting("theme");
+    const changes = frame.querySelector(".stt-import-changes");
+    const hint = frame.querySelector("[data-hint]");
+    const field = frame.querySelector("input[name=mode]");
+    for ( const button of frame.querySelectorAll(".stt-import-modes [data-mode]") ) {
+      button.addEventListener("click", () => {
+        const mode = button.dataset.mode;
+        field.value = mode;
+        for ( const other of frame.querySelectorAll(".stt-import-modes [data-mode]") ) {
+          other.classList.toggle("active", other === button);
+          other.setAttribute("aria-checked", String(other === button));
+        }
+        hint.textContent = t(mode === "replace" ? "STT.Transfer.replaceHint" : "STT.Transfer.mergeHint");
+        changes.innerHTML = FieldConfig.#changesMarkup(plans[mode]);
+      });
+    }
+  }
+
+  /**
+   * Show what an import would change, with the choice between merging and replacing.
+   * @param {object} plans    By mode
+   * @param {object} parsed   The file
+   * @param {string} presetId
+   * @returns {Promise<"merge"|"replace"|null>}
+   */
+  static #askImport(plans, parsed, presetId) {
     return DialogV2.wait({
       window: {title: t("STT.Transfer.title"), icon: "fa-solid fa-file-import"},
       classes: ["stt-app", "stt-import"],
       position: {width: 520},
-      content,
+      content: FieldConfig.importContent(plans, parsed, presetId),
       rejectClose: false,
       buttons: [
         {action: "apply", label: t("STT.Transfer.apply"), icon: "fa-solid fa-check", default: true,
           callback: (event, button) => button.form.elements.mode.value},
         {action: "cancel", label: t("STT.Transfer.cancel"), icon: "fa-solid fa-xmark", callback: () => null}
       ],
-      render: (event, dialog) => {
-        const frame = dialog.element;
-        frame.dataset.sttTheme = setting("theme");
-        const changes = frame.querySelector(".stt-import-changes");
-        const hint = frame.querySelector("[data-hint]");
-        const field = frame.querySelector("input[name=mode]");
-        for ( const button of frame.querySelectorAll(".stt-import-modes [data-mode]") ) {
-          button.addEventListener("click", () => {
-            const mode = button.dataset.mode;
-            field.value = mode;
-            for ( const other of frame.querySelectorAll(".stt-import-modes [data-mode]") ) {
-              other.classList.toggle("active", other === button);
-              other.setAttribute("aria-checked", String(other === button));
-            }
-            hint.textContent = t(mode === "replace" ? "STT.Transfer.replaceHint" : "STT.Transfer.mergeHint");
-            changes.innerHTML = FieldConfig.#changesMarkup(plans[mode]);
-          });
-        }
-      }
+      render: (event, dialog) => FieldConfig.wireImport(dialog, plans)
     });
   }
 
   /** @this {FieldConfig} */
   static async #onSubmit() {
+    // A sample window (sample-windows.mjs) saves nothing
+    if ( this.isSample ) return;
     this.#readForm();
     const preset = presetFor(game.system.id);
     const stored = foundry.utils.deepClone(setting("fieldConfig") ?? {});

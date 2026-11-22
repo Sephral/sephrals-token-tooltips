@@ -375,6 +375,20 @@
       "off": "aus",
       "modeLabel": "Wie die Datei übernommen wird",
       "foot": "Übernehmen trägt die Felder in dieses Fenster ein. Behalten werden sie erst mit Speichern."
+    },
+    "Sample": {
+      "GroupTooltips": "Tooltips",
+      "GroupFields": "Feldfenster",
+      "Gm": "Tooltips als SL",
+      "Player": "Tooltips als Spieler",
+      "All": "Alle Tooltips auf einmal",
+      "Floaters": "Schwebende Zahlen",
+      "Fields": "Felder der Tooltips",
+      "Picker": "Felder der Tooltips: häufige Werte",
+      "PickerAll": "Felder der Tooltips: alle Werte der Figur",
+      "Import": "Felder der Tooltips: Import",
+      "GmNote": "Die SL sieht jeden Wert genau.",
+      "PlayerNote": "Ein Spieler besitzt Ari. Bei allen anderen zeigt sich, was die SL für die Gruppe und für feindliche Figuren erlaubt."
     }
   }
 }
